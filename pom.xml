@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.egova</groupId>
+    <artifactId>egova-framework</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>egova-framework</name>
+
+    <properties>
+        <project.snapshot.version>1.0.0-SNAPSHOT</project.snapshot.version>
+        <egova.snapshot.version>1.0.0-SNAPSHOT</egova.snapshot.version>
+        <egova.publish.version>1.0.0</egova.publish.version>
+        <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
+        <jdk.version>1.8</jdk.version>
+    </properties>
+
+
+    <dependencyManagement>
+        <dependencies>
+
+           
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.10</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <pluginManagement>
+            <plugins>
+                <!-- Compiler 插件, 设定JDK版本 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${jdk.version}</source>
+                        <target>${jdk.version}</target>
+                        <encoding>UTF-8</encoding>
+                        <showWarnings>true</showWarnings>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <configuration>
+                        <skip>false</skip>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    </build>
+
+
+	<distributionManagement>
+		<!-- 需要与conf/Setting.xml文件中的id保持一致 -->
+		<snapshotRepository>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus snapshot repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>sonatype-nexus-staging</id>
+			<name>Sonatype Nexus release repository</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
+
+    <modules>
+        <module>modules/egova-framework-base</module>
+        <module>modules/egova-framework-cache</module>
+        <module>modules/egova-framework-dependencies</module>
+        <module>modules/egova-framework-jackson</module>
+        <module>modules/egova-framework-minio</module>
+        <module>modules/egova-framework-oauth</module>
+        <module>modules/egova-framework-redis</module>
+        <module>modules/egova-framework-cloud-api</module>
+        <module>modules/egova-framework-cloud-adapter</module>
+    </modules>
+
+</project>
