@@ -1,0 +1,197 @@
+package com.egova.json.databind.std;
+
+
+import com.egova.json.databind.JsonAssociativeExecutor;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
+import com.fasterxml.jackson.databind.ser.BeanSerializer;
+import com.fasterxml.jackson.databind.ser.BeanSerializerBuilder;
+import com.fasterxml.jackson.databind.ser.impl.BeanAsArraySerializer;
+import com.fasterxml.jackson.databind.ser.impl.ObjectIdWriter;
+import com.fasterxml.jackson.databind.ser.impl.UnwrappingBeanSerializer;
+import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase;
+import com.fasterxml.jackson.databind.util.NameTransformer;
+import com.flagwind.lang.ExtensibleObject;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * 对ExtensibleObject实体序列化处理
+ * 
+ * @author hbche
+ * @date 2016年11月16日 上午9:20:56
+ */
+public class ExtensibleObjectSerializer extends BeanSerializerBase {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8223368352666403213L;
+
+    /*
+     * /********************************************************** /*
+     * Life-cycle: constructors
+     * /**********************************************************
+     */
+
+    /**
+     * 构造函数
+     * 
+     * @param type 对象类型
+     * @param builder 对象序列化构建器
+     * @param properties 对象属性Writer
+     * @param filteredProperties 过滤数据Wirter
+     */
+    public ExtensibleObjectSerializer(JavaType type, BeanSerializerBuilder builder, BeanPropertyWriter[] properties,
+                                      BeanPropertyWriter[] filteredProperties) {
+        super(type, builder, properties, filteredProperties);
+    }
+
+    /**
+     * 构造函数
+     * 
+     * @param src 原解析对象
+     */
+    public ExtensibleObjectSerializer(BeanSerializerBase src) {
+        super(src);
+    }
+
+    /**
+     * 构造函数
+     * 
+     * @param src 原解析对象
+     * @param objectIdWriter writer
+     */
+    protected ExtensibleObjectSerializer(BeanSerializerBase src, ObjectIdWriter objectIdWriter) {
+        super(src, objectIdWriter);
+    }
+
+    protected ExtensibleObjectSerializer(BeanSerializerBase src, ObjectIdWriter objectIdWriter, Object filterId) {
+        super(src, objectIdWriter, filterId);
+    }
+
+    protected ExtensibleObjectSerializer(BeanSerializerBase src, String[] toIgnore) {
+        super(src, toIgnore);
+    }
+
+    protected ExtensibleObjectSerializer(BeanSerializerBase src, Set<String> toIgnore) {
+        super(src, toIgnore);
+    }
+
+    /*
+     * /********************************************************** /*
+     * Life-cycle: factory methods, fluent factories
+     * /**********************************************************
+     */
+
+    /**
+     * Method for constructing dummy bean serializer; one that never outputs any
+     * properties
+     * 
+     * @param forType forType
+     * @return BeanSerializer
+     */
+    public static BeanSerializer createDummy(JavaType forType) {
+        return new BeanSerializer(forType, null, NO_PROPS, null);
+    }
+
+    @Override
+    public JsonSerializer<Object> unwrappingSerializer(NameTransformer unwrapper) {
+        return new UnwrappingBeanSerializer(this, unwrapper);
+    }
+
+    @Override
+    public BeanSerializerBase withObjectIdWriter(ObjectIdWriter objectIdWriter) {
+        return new ExtensibleObjectSerializer(this, objectIdWriter, _propertyFilterId);
+    }
+
+    @Override
+    protected BeanSerializerBase withIgnorals(Set<String> set)
+    {
+        return new ExtensibleObjectSerializer(this, set);
+    }
+
+    @Override
+    public BeanSerializerBase withFilterId(Object filterId) {
+        return new ExtensibleObjectSerializer(this, _objectIdWriter, filterId);
+    }
+
+    @Override
+    protected BeanSerializerBase withIgnorals(String[] toIgnore) {
+        return new ExtensibleObjectSerializer(this, toIgnore);
+    }
+
+    /**
+     * Implementation has to check whether as-array serialization is possible
+     * reliably; if (and only if) so, will construct a
+     * {@link BeanAsArraySerializer}, otherwise will return this serializer as
+     * is.
+     */
+    @Override
+    protected BeanSerializerBase asArraySerializer() {
+        /*
+         * Can not: - have Object Id (may be allowed in future) - have
+         * "any getter" - have per-property filters
+         */
+        if ((_objectIdWriter == null) && (_anyGetterWriter == null) && (_propertyFilterId == null)) {
+            return new BeanAsArraySerializer(this);
+        }
+        // already is one, so:
+        return this;
+    }
+
+    /*
+     * /********************************************************** /*
+     * JsonSerializer implementation that differs between impls
+     * /**********************************************************
+     */
+
+    /**
+     * Main serialization method that will delegate actual output to configured
+     * {@link BeanPropertyWriter} instances.
+     */
+    @Override
+    public final void serialize(Object bean, JsonGenerator gen, SerializerProvider provider) throws IOException {
+        if (_objectIdWriter != null) {
+            gen.setCurrentValue(bean);
+            _serializeWithObjectId(bean, gen, provider, true);
+            return;
+        }
+        gen.writeStartObject();
+
+        gen.setCurrentValue(bean);
+        if (_propertyFilterId != null) {
+            serializeFieldsFiltered(bean, gen, provider);
+        }
+        else {
+            serializeFields(bean, gen, provider);
+        }
+
+        ExtensibleObject entity = (ExtensibleObject) bean;
+
+        // 检测联想属性配置并增加到扩展字段中
+        JsonAssociativeExecutor.execute(entity);
+
+        Map<String, Object> extras = entity.getExtras();
+        for (String key : extras.keySet()) {
+            gen.writeObjectField(key, extras.get(key));
+        }
+
+        gen.writeEndObject();
+    }
+
+    /*
+     * /********************************************************** /* Standard
+     * methods /**********************************************************
+     */
+    @Override
+    public String toString() {
+        return "BeanSerializer for " + handledType().getName();
+    }
+
+}
