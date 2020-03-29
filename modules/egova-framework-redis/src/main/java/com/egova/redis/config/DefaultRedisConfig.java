@@ -11,11 +11,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 
+/**
+ * redis默认配置
+ */
 @Configuration
 @EnableConfigurationProperties({DefaultRedisConfig.DefaultRedisProperties.class})
 public class DefaultRedisConfig extends RedisConfig {
-
-	private LettuceConnectionFactory connectionFactory;
 
 	@Autowired
 	private DefaultRedisProperties properties;

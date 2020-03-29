@@ -97,6 +97,7 @@
         <module>modules/egova-framework-redis</module>
         <module>modules/egova-framework-cloud-api</module>
         <module>modules/egova-framework-cloud-adapter</module>
+        <module>modules/egova-framework-web</module>
     </modules>
 
 </project>

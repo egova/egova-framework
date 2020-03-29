@@ -28,12 +28,6 @@ public class FastJson2JsonRedisSerializer<T> implements RedisSerializer<T> {
     static {
         parserConfig.setAutoTypeSupport(true);
         parserConfig.register(new CodeTypeModule());
-        // 使用Module处理序列化会报异常
-       // serializeConfig.register(new CodeTypeModule());
-    }
-
-    public FastJson2JsonRedisSerializer() {
-        super();
     }
 
     public FastJson2JsonRedisSerializer(Class<T> clazz) {
@@ -47,7 +41,6 @@ public class FastJson2JsonRedisSerializer<T> implements RedisSerializer<T> {
         }
         JSONObject.DEFFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
         return JSON.toJSONBytes(t,serializeConfig, SerializerFeature.WriteDateUseDateFormat,SerializerFeature.WriteClassName);
-        //return JSON.toJSONString(t, serializeConfig, SerializerFeature.WriteClassName, SerializerFeature.IgnoreErrorGetter, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.SkipTransientField, SerializerFeature.WriteDateUseDateFormat).getBytes(IOUtils.UTF8);
     }
 
     public T deserialize(byte[] bytes) {
