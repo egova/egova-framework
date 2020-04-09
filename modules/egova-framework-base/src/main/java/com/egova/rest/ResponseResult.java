@@ -6,10 +6,31 @@ package com.egova.rest;
  */
 public interface ResponseResult<T> {
 
+    /**
+     * 功能描述：是否有异常
+     *
+     * @author chensoft
+     * @return boolean
+     * @date 2020-04-09 23:15
+     */
     boolean getHasError();
 
+    /**
+     * 功能描述：获取响应结果
+     *
+     * @author chensoft
+     * @return T
+     * @date 2020-04-09 23:15
+     */
     T getResult();
 
+    /**
+     * 功能描述：获取响应的消息
+     *
+     * @author chensoft
+     * @return java.lang.String
+     * @date 2020-04-09 23:16
+     */
     String getMessage();
 
 }

@@ -5,21 +5,17 @@ import com.egova.rest.ResponseResultFactory;
 import com.flagwind.application.Application;
 
 /**
- * 响应结构工具类
+ * 响应结果工具类
  */
 public class ResponseResultUtils {
 
-    public static ResponseResultFactory getFactory() {
+    private static ResponseResultFactory getFactory() {
         ResponseResultFactory factory = Application.resolve(ResponseResultFactory.class);
         return factory;
     }
 
     public static <T> ResponseResult<T> success(T t, String message) {
         return getFactory().success(t, message);
-    }
-
-    public static <T> ResponseResult<T> create() {
-        return getFactory().create();
     }
 
     public static <T> ResponseResult<T> success(T t) {
