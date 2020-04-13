@@ -274,7 +274,7 @@ public class RedisEhcacheCache extends AbstractValueAdaptingCache {
 				}
 			}
 
-			push(new CacheMessage(this.name, null));
+			push(new CacheMessage(this.name, null,null));
 		}
 		if (this.cacheType != CacheType.redis) {
 			ehcacheCache.clear();

@@ -4,6 +4,9 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
+/**
+ * 默认的用户详情
+ */
 public class DefaultUserDetails extends org.springframework.security.core.userdetails.User
 {
 	private String id;

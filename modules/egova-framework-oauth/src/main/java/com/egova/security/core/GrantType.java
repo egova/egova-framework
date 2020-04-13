@@ -22,8 +22,7 @@ public enum  GrantType
 	/**
 	 * 刷新Token
 	 */
-	refreshToken("refresh_token")
-	;
+	refreshToken("refresh_token");
 
 	private final String value;
 

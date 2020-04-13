@@ -7,6 +7,9 @@ import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
 
 
+/**
+ * 默认的ClientDetails的服务类，用于client认证详情信息查询
+ */
 public class DefaultClientDetailsService implements ClientDetailsService
 {
 	private ClientDetailsService clientDetailsService;

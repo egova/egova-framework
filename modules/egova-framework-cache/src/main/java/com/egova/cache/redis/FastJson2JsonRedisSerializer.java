@@ -14,6 +14,10 @@ import com.flagwind.lang.CodeType;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.SerializationException;
 
+/**
+ * FastJson的redis序列化实现
+ * @param <T>
+ */
 public class FastJson2JsonRedisSerializer<T> implements RedisSerializer<T> {
 
 
@@ -64,7 +68,6 @@ public class FastJson2JsonRedisSerializer<T> implements RedisSerializer<T> {
     }
 
     public static class XSerializeConfig extends SerializeConfig {
-
 
         private CodeTypeSerializer codeTypeSerializer = new CodeTypeSerializer();
 

@@ -2,8 +2,10 @@ package com.egova.security.core.properties;
 
 import com.egova.security.core.LoginResponseType;
 import com.egova.security.core.TokenStorageType;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+@Data
 @ConfigurationProperties(prefix = "egova.security.browser")
 public class BrowserProperties
 {
@@ -41,86 +43,9 @@ public class BrowserProperties
 	 */
 	private String signInSuccessUrl;
 
-	public SessionProperties getSession()
-	{
-		return session;
-	}
 
-	public void setSession(SessionProperties session)
-	{
-		this.session = session;
-	}
 
-	public TokenStorageType getTokenStorage()
-	{
-		return tokenStorage;
-	}
-
-	public void setTokenStorage(TokenStorageType tokenStorage)
-	{
-		this.tokenStorage = tokenStorage;
-	}
-
-	public String getSignInPage()
-	{
-		return signInPage;
-	}
-
-	public void setSignInPage(String signInPage)
-	{
-		this.signInPage = signInPage;
-	}
-
-	public int getRememberMeSeconds()
-	{
-		return rememberMeSeconds;
-	}
-
-	public void setRememberMeSeconds(int rememberMeSeconds)
-	{
-		this.rememberMeSeconds = rememberMeSeconds;
-	}
-
-	public String getSignOutUrl()
-	{
-		return signOutUrl;
-	}
-
-	public void setSignOutUrl(String signOutUrl)
-	{
-		this.signOutUrl = signOutUrl;
-	}
-
-	public String getSignUpUrl()
-	{
-		return signUpUrl;
-	}
-
-	public void setSignUpUrl(String signUpUrl)
-	{
-		this.signUpUrl = signUpUrl;
-	}
-
-	public LoginResponseType getSignInResponseType()
-	{
-		return signInResponseType;
-	}
-
-	public void setSignInResponseType(LoginResponseType signInResponseType)
-	{
-		this.signInResponseType = signInResponseType;
-	}
-
-	public String getSignInSuccessUrl()
-	{
-		return signInSuccessUrl;
-	}
-
-	public void setSignInSuccessUrl(String signInSuccessUrl)
-	{
-		this.signInSuccessUrl = signInSuccessUrl;
-	}
-
+	@Data
 	public static class SessionProperties {
 		/**
 		 * 同一个用户在系统中的最大session数，默认1
@@ -135,28 +60,6 @@ public class BrowserProperties
 		 */
 		private String sessionInvalidUrl = "/invalid.html";
 
-		public int getMaximumSessions() {
-			return maximumSessions;
-		}
 
-		public void setMaximumSessions(int maximumSessions) {
-			this.maximumSessions = maximumSessions;
-		}
-
-		public boolean isMaxSessionsPreventsLogin() {
-			return maxSessionsPreventsLogin;
-		}
-
-		public void setMaxSessionsPreventsLogin(boolean maxSessionsPreventsLogin) {
-			this.maxSessionsPreventsLogin = maxSessionsPreventsLogin;
-		}
-
-		public String getSessionInvalidUrl() {
-			return sessionInvalidUrl;
-		}
-
-		public void setSessionInvalidUrl(String sessionInvalidUrl) {
-			this.sessionInvalidUrl = sessionInvalidUrl;
-		}
 	}
 }

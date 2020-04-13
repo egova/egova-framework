@@ -16,6 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * 默认的认证失败结果处理器
+ */
 @EnableConfigurationProperties(BrowserProperties.class)
 @Component
 public class DefaultAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler

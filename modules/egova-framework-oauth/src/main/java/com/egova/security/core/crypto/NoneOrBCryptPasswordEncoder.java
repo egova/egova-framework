@@ -1,15 +1,18 @@
 package com.egova.security.core.crypto;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+
+@Slf4j
 public class NoneOrBCryptPasswordEncoder implements PasswordEncoder
 {
-	private final Log logger = LogFactory.getLog(getClass());
 
 	private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
 	@Override
 	public String encode(CharSequence rawPassword)
 	{
@@ -19,7 +22,7 @@ public class NoneOrBCryptPasswordEncoder implements PasswordEncoder
 	@Override
 	public boolean matches(CharSequence rawPassword, String encodedPassword) {
 		if (encodedPassword == null || encodedPassword.length() == 0) {
-			logger.warn("Empty encoded password");
+			log.warn("Empty encoded password");
 			return false;
 		}
 

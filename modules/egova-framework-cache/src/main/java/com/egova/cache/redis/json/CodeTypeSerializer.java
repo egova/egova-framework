@@ -10,7 +10,10 @@ import com.flagwind.lang.CodeType;
 
 import java.lang.reflect.Type;
 
-public class CodeTypeSerializer   implements ObjectSerializer, ObjectDeserializer {
+/**
+ * 自定义CodeType类型的序列化与反序列化实现
+ */
+public class CodeTypeSerializer implements ObjectSerializer, ObjectDeserializer {
 
     @Override
     public <T> T deserialze(DefaultJSONParser parser, Type type, Object fieldName) {

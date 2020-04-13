@@ -5,7 +5,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 import java.util.List;
 
-
+/**
+ * 抽象的HttpSecurityConfigurer的管理者
+ */
 public class HttpSecurityConfigurerManager
 {
 

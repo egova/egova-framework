@@ -20,114 +20,110 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 
-public class RedisEhcacheCacheManager implements CacheManager
-{
-	private static final Log log = LogFactory.getLog(RedisEhcacheCacheManager.class);
+public class RedisEhcacheCacheManager implements CacheManager {
+    private static final Log log = LogFactory.getLog(RedisEhcacheCacheManager.class);
 
-	private ConcurrentMap<String, Cache> cacheMap = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, Cache> cacheMap = new ConcurrentHashMap<>();
 
-	private RedisEhcacheProperties redisEhcacheProperties;
+    private RedisEhcacheProperties redisEhcacheProperties;
 
-	private RedisTemplate<Object, Object> redisTemplate;
+    private RedisTemplate<Object, Object> redisTemplate;
 
-	private boolean dynamic;
+    private boolean dynamic;
 
-	private Set<String> cacheNames;
+    private Set<String> cacheNames;
 
-	private org.ehcache.CacheManager ehCacheManager;
-	private CacheConfiguration<Object, Object> configuration;
+    private org.ehcache.CacheManager ehCacheManager;
+    private CacheConfiguration<Object, Object> configuration;
 
-	private ReentrantLock lock = new ReentrantLock();
+    private ReentrantLock lock = new ReentrantLock();
 
-	public RedisEhcacheCacheManager(RedisEhcacheProperties redisEhcacheProperties,
-									RedisTemplate<Object, Object> redisTemplate)
-	{
-		super();
-		this.redisEhcacheProperties = redisEhcacheProperties;
-		if(redisTemplate == null)
-		{
-			if(this.redisEhcacheProperties.getCacheType() != CacheType.ehcache)
-			{
-				log.warn("redis缓存构建失败，自动切换成ehcache缓存");
-				this.redisEhcacheProperties.setCacheType(CacheType.ehcache);
-			}
-		}
-		this.redisTemplate = redisTemplate;
-		this.dynamic = redisEhcacheProperties.isDynamic();
-		this.cacheNames = redisEhcacheProperties.getCacheNames();
+    public RedisEhcacheCacheManager(RedisEhcacheProperties redisEhcacheProperties,
+                                    RedisTemplate<Object, Object> redisTemplate) {
+        super();
+        this.redisEhcacheProperties = redisEhcacheProperties;
+        if (redisTemplate == null) {
+            if (this.redisEhcacheProperties.getCacheType() != CacheType.ehcache) {
+                log.warn("redis缓存构建失败，自动切换成ehcache缓存");
+                this.redisEhcacheProperties.setCacheType(CacheType.ehcache);
+            }
+        }
+        this.redisTemplate = redisTemplate;
+        this.dynamic = redisEhcacheProperties.isDynamic();
+        this.cacheNames = redisEhcacheProperties.getCacheNames();
 
-		setAboutEhCache();
+        setAboutEhCache();
 
-	}
-	private void setAboutEhCache(){
-		long ehcacheExpire = redisEhcacheProperties.getEhcache().getExpireAfterWrite();
-		this.configuration =
-				CacheConfigurationBuilder
-						.newCacheConfigurationBuilder(Object.class, Object.class, ResourcePoolsBuilder.heap(redisEhcacheProperties.getEhcache().getMaxEntry()))
-						.withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(ehcacheExpire)))
-						.build();
-		this.ehCacheManager = CacheManagerBuilder
-				.newCacheManagerBuilder()
-				.build();
-		this.ehCacheManager.init();
-	}
+    }
 
-	@Override
-	public Cache getCache(String name) {
+    private void setAboutEhCache() {
+        long ehcacheExpire = redisEhcacheProperties.getEhcache().getExpireAfterWrite();
+        this.configuration =
+                CacheConfigurationBuilder
+                        .newCacheConfigurationBuilder(Object.class, Object.class, ResourcePoolsBuilder.heap(redisEhcacheProperties.getEhcache().getMaxEntry()))
+                        .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(ehcacheExpire)))
+                        .build();
+        this.ehCacheManager = CacheManagerBuilder
+                .newCacheManagerBuilder()
+                .build();
+        this.ehCacheManager.init();
+    }
 
-		String[] arr =name.split("#");
-		name = arr[0];
+    @Override
+    public Cache getCache(String name) {
 
-		String expireKey = "";
-		if(arr.length>1){
-			expireKey = arr[1];
-		}
-		Cache cache = cacheMap.get(name);
-		if(cache != null) {
-			return cache;
-		}
-		if(!dynamic && !cacheNames.contains(name)) {
-			return cache;
-		}
+        String[] arr = name.split("#");
+        name = arr[0];
 
-		cache = new RedisEhcacheCache(name,expireKey, redisTemplate, getEhcache(name), redisEhcacheProperties);
+        String expireKey = "";
+        if (arr.length > 1) {
+            expireKey = arr[1];
+        }
+        Cache cache = cacheMap.get(name);
+        if (cache != null) {
+            return cache;
+        }
+        if (!dynamic && !cacheNames.contains(name)) {
+            return cache;
+        }
 
-		Cache oldCache = cacheMap.putIfAbsent(name, cache);
-		log.debug(String.format("create cache instance, the cache name is : %s", name));
-		return oldCache == null ? cache : oldCache;
-	}
+        cache = new RedisEhcacheCache(name, expireKey, redisTemplate, getEhcache(name), redisEhcacheProperties);
 
-	private org.ehcache.Cache<Object, Object> getEhcache(String name) {
+        Cache oldCache = cacheMap.putIfAbsent(name, cache);
+        log.debug(String.format("create cache instance, the cache name is : %s", name));
+        return oldCache == null ? cache : oldCache;
+    }
 
-		try {
-			lock.lock();
-			org.ehcache.Cache<Object, Object> res = ehCacheManager.getCache(name, Object.class, Object.class);
-			if (res != null) {
-				return res;
-			}
+    private org.ehcache.Cache<Object, Object> getEhcache(String name) {
 
-			return ehCacheManager.createCache(name, configuration);
-		} finally {
-			lock.unlock();
-		}
-	}
+        try {
+            lock.lock();
+            org.ehcache.Cache<Object, Object> res = ehCacheManager.getCache(name, Object.class, Object.class);
+            if (res != null) {
+                return res;
+            }
 
-	@Override
-	public Collection<String> getCacheNames() {
-		return this.cacheNames;
-	}
+            return ehCacheManager.createCache(name, configuration);
+        } finally {
+            lock.unlock();
+        }
+    }
 
-	public void clearLocal(String cacheName, Object key, Integer sender) {
-		Cache cache = cacheMap.get(cacheName);
-		if(cache == null) {
-			return ;
-		}
+    @Override
+    public Collection<String> getCacheNames() {
+        return this.cacheNames;
+    }
 
-		RedisEhcacheCache redisEhcacheCache = (RedisEhcacheCache) cache;
-		//如果是发送者本身发送的消息，就不进行key的清除
-		if(sender==null|| redisEhcacheCache.getLocalCache().hashCode() != sender)
-		{
-			redisEhcacheCache.clearLocal(key);
-		}
-	}
+    public void clearLocal(String cacheName, Object key, Integer sender) {
+        Cache cache = cacheMap.get(cacheName);
+        if (cache == null) {
+            return;
+        }
+
+        RedisEhcacheCache redisEhcacheCache = (RedisEhcacheCache) cache;
+        // 如果是发送者本身发送的消息，就不进行key的清除
+        if (sender == null || redisEhcacheCache.getLocalCache().hashCode() != sender) {
+            redisEhcacheCache.clearLocal(key);
+        }
+    }
 }

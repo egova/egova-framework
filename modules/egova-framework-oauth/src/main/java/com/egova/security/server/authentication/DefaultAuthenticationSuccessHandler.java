@@ -19,6 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * 默认的认证成功的结果处理类
+ */
 @EnableConfigurationProperties(BrowserProperties.class)
 @Component
 public class DefaultAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {

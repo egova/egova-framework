@@ -1,28 +1,54 @@
 package com.egova.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+
+/**
+ * 反射工具
+ *
+ * @author chenabao
+ */
+@Slf4j
 public class ReflectExtraUtils {
 
 
-    public static Object getFieldValue(Object object, Field field)
-            throws Exception {
-        Method m = object.getClass().getMethod(
-                "get" + convertFirstUpper(field.getName()));
+    /**
+     * 获取字段值
+     *
+     * @param object 对象
+     * @param field 对象字段
+     * @return
+     * @throws Exception
+     */
+    public static Object getFieldValue(Object object, Field field) {
 
-        Class<?> clazz = object.getClass();
+        try {
 
-        if (m == null && (field.getGenericType().toString().equals("boolean")
-                || field.getGenericType().toString()
-                .equals("class java.lang.Boolean"))) {
-            m = clazz.getMethod("is" + convertFirstUpper(field.getName()));
+            Method m = object.getClass().getMethod(
+                    "get" + convertFirstUpper(field.getName()));
+
+            Class<?> clazz = object.getClass();
+
+            if (m == null && (field.getGenericType().toString().equals("boolean")
+                    || field.getGenericType().toString()
+                    .equals("class java.lang.Boolean"))) {
+                m = clazz.getMethod("is" + convertFirstUpper(field.getName()));
+            }
+            return m.invoke(object);// 调用getter方法获取属性值
+
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("没有找到字段的get方法", e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("不能访问该字段的get方法", e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException("不能访问该字段的get方法", e);
         }
-
-        return m.invoke(object);// 调用getter方法获取属性值
     }
 
     /**
@@ -39,79 +65,100 @@ public class ReflectExtraUtils {
 
         Class<?> clazz = obj.getClass();
         try {
-            String methodname = "get" + StringUtils.capitalize(fieldName);
-            Method method = clazz.getDeclaredMethod(methodname);
+            String methodName = "get" + StringUtils.capitalize(fieldName);
+            Method method = clazz.getDeclaredMethod(methodName);
 
             if (method == null) {
-                methodname = "is" + StringUtils.capitalize(fieldName);
-                method = clazz.getDeclaredMethod(methodname);
+                methodName = "is" + StringUtils.capitalize(fieldName);
+                method = clazz.getDeclaredMethod(methodName);
             }
 
             method.setAccessible(true);
             return method.invoke(obj);
+
         } catch (Exception e) {
             try {
                 Field field = clazz.getDeclaredField(fieldName);
                 field.setAccessible(true);
                 return field.get(obj);
-            } catch (Exception e1) {
-                e1.printStackTrace();
+            } catch (Exception ex) {
+                throw new RuntimeException("不能访问该字段的get方法", e);
             }
         }
-        return null;
     }
 
-    public static void setFieldValue(Object target, String fname,
-                                     Class<?> fieldClass, Object fieldObj) {
-        if (!fieldClass.isAssignableFrom(fieldObj.getClass())) {
+    /**
+     * 设置字段的值
+     * @param target 对象
+     * @param fieldName 字段名
+     * @param fieldClass 字段类型
+     * @param fieldValue 字段值
+     */
+    public static void setFieldValue(Object target, String fieldName,
+                                     Class<?> fieldClass, Object fieldValue) {
+        if (!fieldClass.isAssignableFrom(fieldValue.getClass())) {
             return;
         }
         Class<?> clazz = target.getClass();
         try {
             Method method = clazz.getDeclaredMethod(
-                    "set" + Character.toUpperCase(fname.charAt(0))
-                            + fname.substring(1),
+                    "set" + Character.toUpperCase(fieldName.charAt(0))
+                            + fieldName.substring(1),
                     fieldClass);
 
             if (method == null) {
-                String methodName = convertFirstUpperLower(fname);
+                String methodName = convertFirstLower(fieldName);
                 method = clazz.getDeclaredMethod(methodName);
             }
 
             method.setAccessible(true);
-            method.invoke(target, fieldObj);
+            method.invoke(target, fieldValue);
+
         } catch (Exception e) {
             try {
-                Field field = clazz.getDeclaredField(fname);
+                Field field = clazz.getDeclaredField(fieldName);
                 field.setAccessible(true);
-                field.set(target, fieldObj);
+                field.set(target, fieldValue);
             } catch (Exception e1) {
-                e1.printStackTrace();
+                throw new RuntimeException("设置字段的值异常", e);
             }
         }
     }
 
+
+    /**
+     * 获取字段的注解
+     * @param clazz 类型
+     * @param fieldName 字段名
+     * @param annotationClass 注解类型
+     * @param <T> 注解约束
+     * @return
+     */
     public static <T extends Annotation> T getAnnotation(Class<?> clazz,
                                                          String fieldName, Class<T> annotationClass) {
 
         try {
 
-            T annotation = getFieldAnnotation(clazz, fieldName,
-                    annotationClass);
+            T annotation = getFieldAnnotation(clazz, fieldName, annotationClass);
             if (annotation == null) {
-                annotation = getMethodAnnotation(clazz, fieldName,
-                        annotationClass);
+                annotation = getMethodAnnotation(clazz, fieldName, annotationClass);
             }
             return annotation;
 
         } catch (Exception e) {
-
-            e.printStackTrace();
-
+            throw new RuntimeException("获取字段注解", e);
         }
-        return null;
     }
 
+
+    /**
+     * 获取字段注解
+     * @param clazz 类型
+     * @param fieldName 字段名称
+     * @param annotationClass 注解类型
+     * @param <T> 注解约束
+     * @return
+     */
     public static <T extends Annotation> T getFieldAnnotation(Class<?> clazz,
                                                               String fieldName, Class<T> annotationClass) {
 
@@ -121,39 +168,43 @@ public class ReflectExtraUtils {
             if (field != null && field.isAnnotationPresent(annotationClass)) {
                 return field.getAnnotation(annotationClass);
             }
+            return null;
 
         } catch (Exception e) {
-
-            e.printStackTrace();
-
+            throw new RuntimeException("获取字段注解", e);
         }
-        return null;
     }
+
 
     public static <T extends Annotation> T getMethodAnnotation(Class<?> clazz,
                                                                String fieldName, Class<T> annotationClass) {
 
         try {
-            String methodname = "get" + StringUtils.capitalize(fieldName);
-            Method method = clazz.getDeclaredMethod(methodname);
+            String methodName = "get" + StringUtils.capitalize(fieldName);
+            Method method = clazz.getDeclaredMethod(methodName);
 
             if (method == null) {
-                methodname = "is" + StringUtils.capitalize(fieldName);
-                method = clazz.getDeclaredMethod(methodname);
+                methodName = "is" + StringUtils.capitalize(fieldName);
+                method = clazz.getDeclaredMethod(methodName);
             }
             if (method.isAnnotationPresent(annotationClass)) {
                 return method.getAnnotation(annotationClass);
             }
+            return null;
 
         } catch (Exception e) {
-
-            e.printStackTrace();
-
+            throw new RuntimeException("获取方法注解", e);
         }
-        return null;
+
     }
 
-    private static String convertFirstUpperLower(String str) {
+    /**
+     * 设置第一个字符为小写
+     *
+     * @param str
+     * @return
+     */
+    private static String convertFirstLower(String str) {
         if (str == null || str.trim().length() == 0) {
             return str;
         }
@@ -167,6 +218,12 @@ public class ReflectExtraUtils {
 
     }
 
+    /**
+     * 设置第一个字符为大写
+     *
+     * @param str
+     * @return
+     */
     private static String convertFirstUpper(String str) {
         if (str == null || str.trim().length() == 0) {
             return str;

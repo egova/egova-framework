@@ -7,6 +7,9 @@ import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.spi.Module;
 import com.flagwind.lang.CodeType;
 
+/**
+ * CodeType序列化与反序列化策略
+ */
 public class CodeTypeModule implements  Module {
 
     @Override

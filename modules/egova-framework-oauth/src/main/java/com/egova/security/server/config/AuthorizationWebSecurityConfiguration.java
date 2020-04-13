@@ -67,7 +67,6 @@ public class AuthorizationWebSecurityConfiguration extends BrowserSecurityConfig
 	@Override
 	public void configure(AuthenticationManagerBuilder auth)
 	{
-
 		AuthenticationProvider daoAuthenticationProvider = beanFactory.getBean("daoAuthenticationProvider", AuthenticationProvider.class);
 		auth.authenticationProvider(daoAuthenticationProvider);
 	}

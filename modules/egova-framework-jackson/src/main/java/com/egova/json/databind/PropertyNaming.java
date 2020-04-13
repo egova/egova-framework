@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 名称注解
+ * 名称映射注解，用于处理接受或写入的json结果与系统定义的不一样问题的处理
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD,  ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
