@@ -14,7 +14,6 @@ import java.lang.reflect.Method;
  *
  * @author chenabao
  */
-@Slf4j
 public class ReflectExtraUtils {
 
 
