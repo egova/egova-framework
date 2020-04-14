@@ -104,7 +104,6 @@ public class ExceptionUtils
 	 * @return 是否由指定异常类引起
 	 * @since 4.1.13
 	 */
-	@SuppressWarnings("unchecked")
 	public static boolean isCausedBy(Throwable throwable, Class<? extends Exception>... causeClasses) {
 		return null != getCausedBy(throwable, causeClasses);
 	}
@@ -117,7 +116,6 @@ public class ExceptionUtils
 	 * @return 是否由指定异常类引起
 	 * @since 4.1.13
 	 */
-	@SuppressWarnings("unchecked")
 	public static Throwable getCausedBy(Throwable throwable, Class<? extends Exception>... causeClasses) {
 		Throwable cause = throwable;
 		while (cause != null) {

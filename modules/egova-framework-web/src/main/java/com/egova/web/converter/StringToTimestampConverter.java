@@ -1,7 +1,7 @@
 package com.egova.web.converter;
 
 
-import com.egova.exception.BusinessException;
+import com.egova.exception.FrameworkException;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.core.convert.converter.Converter;
 
@@ -32,7 +32,7 @@ public class StringToTimestampConverter implements Converter<String, Timestamp> 
             java.util.Date date = DateUtils.parseDate(source, DATE_FORMATS);
             return new Timestamp(date.getTime());
         } catch (Exception ex) {
-            throw new BusinessException(String.format("Timestamp时间转换异常,转换值为%s", source));
+            throw new FrameworkException(String.format("Timestamp时间转换异常,转换值为%s", source));
         }
     }
 }

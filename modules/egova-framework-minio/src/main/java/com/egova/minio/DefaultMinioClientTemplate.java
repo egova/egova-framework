@@ -1,6 +1,6 @@
 package com.egova.minio;
 
-import com.egova.exception.BusinessException;
+import com.egova.exception.FrameworkException;
 import io.minio.ErrorCode;
 import io.minio.MinioClient;
 import io.minio.Result;
@@ -34,7 +34,7 @@ public class DefaultMinioClientTemplate implements MinioClientTemplate {
             client.makeBucket(bucket);
         } catch (Exception e) {
             LOG.error("make bucket {} failed", bucket);
-            throw new BusinessException("make bucket failed", e);
+            throw new FrameworkException("make bucket failed", e);
         }
     }
 
@@ -45,7 +45,7 @@ public class DefaultMinioClientTemplate implements MinioClientTemplate {
             return client.bucketExists(bucket);
         } catch (Exception e) {
             LOG.error("bucket {} exist failed", bucket);
-            throw new BusinessException("bucket exist failed", e);
+            throw new FrameworkException("bucket exist failed", e);
         }
     }
 
@@ -60,7 +60,7 @@ public class DefaultMinioClientTemplate implements MinioClientTemplate {
             }
         } catch (Exception e) {
             LOG.error("object object {} failed", object);
-            throw new BusinessException("object exist failed", e);
+            throw new FrameworkException("object exist failed", e);
         }
         return true;
     }
@@ -72,7 +72,7 @@ public class DefaultMinioClientTemplate implements MinioClientTemplate {
             client.putObject(bucket, object, file, null, null, null, null);
         } catch (Exception e) {
             LOG.error("put object {} failed", object);
-            throw new BusinessException("put object failed", e);
+            throw new FrameworkException("put object failed", e);
         }
     }
 
@@ -88,7 +88,7 @@ public class DefaultMinioClientTemplate implements MinioClientTemplate {
             client.putObject(bucket, object, inputStream, size, null, null, null);
         } catch (Exception e) {
             LOG.error("put object {} failed", object);
-            throw new BusinessException("put object failed", e);
+            throw new FrameworkException("put object failed", e);
         }
     }
 
@@ -107,7 +107,7 @@ public class DefaultMinioClientTemplate implements MinioClientTemplate {
             return client.getObject(bucket, object, offset, length);
         } catch (Exception e) {
             LOG.error("get object {} failed", object);
-            throw new BusinessException("get object failed", e);
+            throw new FrameworkException("get object failed", e);
         }
     }
 
@@ -118,7 +118,7 @@ public class DefaultMinioClientTemplate implements MinioClientTemplate {
             client.removeObject(bucket, object);
         } catch (Exception e) {
             LOG.error("remove object {} failed", object);
-            throw new BusinessException("remove object failed", e);
+            throw new FrameworkException("remove object failed", e);
         }
     }
 
@@ -134,10 +134,10 @@ public class DefaultMinioClientTemplate implements MinioClientTemplate {
                 LOG.error("remove object {} failed, error: {}", error.objectName(), error.message());
             }
         } catch (Exception e) {
-            throw new BusinessException("remove objects failed", e);
+            throw new FrameworkException("remove objects failed", e);
         }
         if (hasError) {
-            throw new BusinessException("remove objects failed");
+            throw new FrameworkException("remove objects failed");
         }
     }
 

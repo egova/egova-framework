@@ -1,9 +1,9 @@
 package com.egova.security.server.authentication;
 
+import com.egova.json.JsonMapping;
+import com.egova.rest.ResponseResults;
 import com.egova.security.core.LoginResponseType;
 import com.egova.security.core.properties.BrowserProperties;
-import com.egova.utils.ResponseResultUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ public class DefaultAuthenticationFailureHandler extends SimpleUrlAuthentication
 	private BrowserProperties browserProperties;
 
 	@Autowired
-	ObjectMapper objectMapper;
+	JsonMapping jsonMapper;
 
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
@@ -36,7 +36,7 @@ public class DefaultAuthenticationFailureHandler extends SimpleUrlAuthentication
 		if (LoginResponseType.json.equals(browserProperties.getSignInResponseType())) {
 			httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
 			httpServletResponse.setContentType("application/json;charset=UTF-8");
-			httpServletResponse.getWriter().write(objectMapper.writeValueAsString(ResponseResultUtils.error(e.getMessage())));
+			httpServletResponse.getWriter().write(jsonMapper.serialize(ResponseResults.error(e.getMessage())));
 		} else {
 			super.onAuthenticationFailure(httpServletRequest, httpServletResponse, e);
 		}

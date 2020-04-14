@@ -1,8 +1,6 @@
 package com.egova.security.core.authentication;
 
 import com.egova.security.core.provider.UserDetailsExecutor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

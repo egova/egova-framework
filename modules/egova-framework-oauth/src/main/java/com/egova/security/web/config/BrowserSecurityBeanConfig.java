@@ -1,5 +1,6 @@
 package com.egova.security.web.config;
 
+import com.egova.json.JsonMapping;
 import com.egova.security.core.properties.BrowserProperties;
 import com.egova.security.core.properties.SecurityProperties;
 import com.egova.security.web.logout.DefaultLogoutSuccessHandler;
@@ -15,42 +16,44 @@ import org.springframework.security.web.session.SessionInformationExpiredStrateg
 @EnableConfigurationProperties({BrowserProperties.class, SecurityProperties.class})
 public class BrowserSecurityBeanConfig {
 
-	@Autowired
-	private BrowserProperties browserProperties;
+    @Autowired
+    private BrowserProperties browserProperties;
 
-	/**
-	 * session失效时的处理策略配置
-	 *
-	 * @return
-	 */
-	@Bean
-	@ConditionalOnMissingBean(InvalidSessionStrategy.class)
-	public InvalidSessionStrategy invalidSessionStrategy() {
-		return new com.egova.security.web.session.InvalidSessionStrategy(browserProperties);
-	}
+    @Autowired
+    private JsonMapping jsonMapping;
 
-	/**
-	 * 并发登录导致前一个session失效时的处理策略配置
-	 *
-	 * @return
-	 */
-	@Bean
-	@ConditionalOnMissingBean(SessionInformationExpiredStrategy.class)
-	public SessionInformationExpiredStrategy sessionInformationExpiredStrategy() {
-		return new ExpiredSessionStrategy(browserProperties);
-	}
+    /**
+     * session失效时的处理策略配置
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean(InvalidSessionStrategy.class)
+    public InvalidSessionStrategy invalidSessionStrategy() {
+        return new com.egova.security.web.session.InvalidSessionStrategy(jsonMapping, browserProperties);
+    }
 
-	/**
-	 * 退出时的处理策略配置
-	 *
-	 * @return
-	 */
-	@Bean
-	@ConditionalOnMissingBean(LogoutSuccessHandler.class)
-	public LogoutSuccessHandler logoutSuccessHandler() {
-		return new DefaultLogoutSuccessHandler(browserProperties.getSignOutUrl());
-	}
+    /**
+     * 并发登录导致前一个session失效时的处理策略配置
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean(SessionInformationExpiredStrategy.class)
+    public SessionInformationExpiredStrategy sessionInformationExpiredStrategy() {
+        return new ExpiredSessionStrategy(jsonMapping, browserProperties);
+    }
 
+    /**
+     * 退出时的处理策略配置
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean(LogoutSuccessHandler.class)
+    public LogoutSuccessHandler logoutSuccessHandler() {
+        return new DefaultLogoutSuccessHandler(jsonMapping, browserProperties.getSignOutUrl());
+    }
 
 
 }

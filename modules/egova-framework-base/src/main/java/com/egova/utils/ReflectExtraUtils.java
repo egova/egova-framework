@@ -1,6 +1,6 @@
 package com.egova.utils;
 
-import lombok.extern.slf4j.Slf4j;
+import com.egova.exception.FrameworkException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
@@ -21,7 +21,7 @@ public class ReflectExtraUtils {
      * 获取字段值
      *
      * @param object 对象
-     * @param field 对象字段
+     * @param field  对象字段
      * @return
      * @throws Exception
      */
@@ -29,8 +29,7 @@ public class ReflectExtraUtils {
 
         try {
 
-            Method m = object.getClass().getMethod(
-                    "get" + convertFirstUpper(field.getName()));
+            Method m = object.getClass().getMethod("get" + convertFirstUpper(field.getName()));
 
             Class<?> clazz = object.getClass();
 
@@ -42,11 +41,11 @@ public class ReflectExtraUtils {
             return m.invoke(object);// 调用getter方法获取属性值
 
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException("没有找到字段的get方法", e);
+            throw new FrameworkException("没有找到字段的get方法", e);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException("不能访问该字段的get方法", e);
+            throw new FrameworkException("不能访问该字段的get方法", e);
         } catch (InvocationTargetException e) {
-            throw new RuntimeException("不能访问该字段的get方法", e);
+            throw new FrameworkException("不能访问该字段的get方法", e);
         }
     }
 
@@ -81,15 +80,16 @@ public class ReflectExtraUtils {
                 field.setAccessible(true);
                 return field.get(obj);
             } catch (Exception ex) {
-                throw new RuntimeException("不能访问该字段的get方法", e);
+                throw new FrameworkException("不能访问该字段的get方法", e);
             }
         }
     }
 
     /**
      * 设置字段的值
-     * @param target 对象
-     * @param fieldName 字段名
+     *
+     * @param target     对象
+     * @param fieldName  字段名
      * @param fieldClass 字段类型
      * @param fieldValue 字段值
      */
@@ -119,7 +119,7 @@ public class ReflectExtraUtils {
                 field.setAccessible(true);
                 field.set(target, fieldValue);
             } catch (Exception e1) {
-                throw new RuntimeException("设置字段的值异常", e);
+                throw new FrameworkException("设置字段的值异常", e);
             }
         }
     }
@@ -127,10 +127,11 @@ public class ReflectExtraUtils {
 
     /**
      * 获取字段的注解
-     * @param clazz 类型
-     * @param fieldName 字段名
+     *
+     * @param clazz           类型
+     * @param fieldName       字段名
      * @param annotationClass 注解类型
-     * @param <T> 注解约束
+     * @param <T>             注解约束
      * @return
      */
     public static <T extends Annotation> T getAnnotation(Class<?> clazz,
@@ -145,17 +146,18 @@ public class ReflectExtraUtils {
             return annotation;
 
         } catch (Exception e) {
-            throw new RuntimeException("获取字段注解", e);
+            throw new FrameworkException("获取字段注解", e);
         }
     }
 
 
     /**
      * 获取字段注解
-     * @param clazz 类型
-     * @param fieldName 字段名称
+     *
+     * @param clazz           类型
+     * @param fieldName       字段名称
      * @param annotationClass 注解类型
-     * @param <T> 注解约束
+     * @param <T>             注解约束
      * @return
      */
     public static <T extends Annotation> T getFieldAnnotation(Class<?> clazz,
@@ -170,7 +172,7 @@ public class ReflectExtraUtils {
             return null;
 
         } catch (Exception e) {
-            throw new RuntimeException("获取字段注解", e);
+            throw new FrameworkException("获取字段注解", e);
         }
     }
 
@@ -192,7 +194,7 @@ public class ReflectExtraUtils {
             return null;
 
         } catch (Exception e) {
-            throw new RuntimeException("获取方法注解", e);
+            throw new FrameworkException("获取方法注解", e);
         }
 
     }

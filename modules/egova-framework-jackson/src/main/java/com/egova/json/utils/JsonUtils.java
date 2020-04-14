@@ -1,13 +1,14 @@
 package com.egova.json.utils;
 
+import com.egova.exception.FrameworkException;
 import com.egova.json.databind.ObjectMappingCustomer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
+import com.flagwind.application.Application;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -23,70 +24,88 @@ import java.util.Collection;
  */
 public class JsonUtils {
 
-	private static ObjectMappingCustomer CUSTOMER = new ObjectMappingCustomer();
+	private static ObjectMappingCustomer ASSOCIATIVE_OBJECT_MAPPER;
 
-	private static ObjectMapper ORIGINAL = new ObjectMapper();
+	private static ObjectMappingCustomer CUSTOM_OBJECT_MAPPER;
 
-	static {
-		CUSTOMER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	private static ObjectMappingCustomer getAssociativeMapping() {
+		try {
+			return Application.resolve(ObjectMappingCustomer.class);
+		} catch (Exception ex) {
+			if (ASSOCIATIVE_OBJECT_MAPPER == null) {
+				ASSOCIATIVE_OBJECT_MAPPER = new ObjectMappingCustomer(true);
+			}
+			return ASSOCIATIVE_OBJECT_MAPPER;
+		}
 	}
 
-	/**
-	 * 功能描述：把json反序列化成指定类型的对象
-	 *
-	 * @author chensoft
-	 * @params [json:JSON的字符串值, clazz:对象类型]
-	 * @return T
-	 * @date 2020-04-10 22:10
-	 */
-	public static <T> T deserializeByType(String json, TypeReference type) {
+	private static ObjectMappingCustomer getCustomMapping() {
 		try {
-			T d = CUSTOMER.readValue(json, type);
-			return d;
-		} catch (Exception e) {
-			throw new RuntimeException(type + "类型对象解析出错", e);
+			return Application.resolve("customObjectMapper");
+		} catch (Exception ex) {
+			if (CUSTOM_OBJECT_MAPPER == null) {
+				CUSTOM_OBJECT_MAPPER = new ObjectMappingCustomer(false);
+			}
+			return CUSTOM_OBJECT_MAPPER;
 		}
 	}
 
 	/**
 	 * 功能描述：把json反序列化成指定类型的对象
 	 *
+	 * @return T
 	 * @author chensoft
 	 * @params [json:JSON的字符串值, clazz:对象类型]
+	 * @date 2020-04-10 22:10
+	 */
+	public static <T> T deserializeByType(String json, TypeReference type) {
+		try {
+			T d = getAssociativeMapping().readValue(json, type);
+			return d;
+		} catch (Exception e) {
+			throw new FrameworkException(type + "类型对象解析出错", e);
+		}
+	}
+
+	/**
+	 * 功能描述：把json反序列化成指定类型的对象
+	 *
 	 * @return T
+	 * @author chensoft
+	 * @params [json:JSON的字符串值, clazz:对象类型]
 	 * @date 2020-04-10 22:10
 	 */
 	public static <T> T deserialize(String json, Class<?> clazz) {
 		try {
-			T d = (T) CUSTOMER.readValue(json, clazz);
+			T d = (T) getAssociativeMapping().readValue(json, clazz);
 			return d;
 		} catch (IOException e) {
-			throw new RuntimeException(clazz + "类型对象解析出错", e);
+			throw new FrameworkException(clazz + "类型对象解析出错", e);
 		}
 	}
 
 	/**
 	 * 功能描述：把json反序列化成JsonNode数据结构
 	 *
+	 * @return com.fasterxml.jackson.databind.JsonNode
 	 * @author chensoft
 	 * @params [json:JSON的字符串值]
-	 * @return com.fasterxml.jackson.databind.JsonNode
 	 * @date 2020-04-10 22:08
 	 */
 	public static JsonNode readTree(String json) {
 		try {
-			return CUSTOMER.readTree(json);
+			return getAssociativeMapping().readTree(json);
 		} catch (Exception ex) {
-			throw new RuntimeException("解析json为JsonNode对象异常", ex);
+			throw new FrameworkException("解析json为JsonNode对象异常", ex);
 		}
 	}
 
 	/**
 	 * 功能描述：把json反序列化成List对象集合
 	 *
+	 * @return java.util.List<T> 对象集合
 	 * @author chensoft
 	 * @params [json:JSON的字符串值, clazz:元素类型]
-	 * @return java.util.List<T> 对象集合
 	 * @date 2020-04-10 22:12
 	 */
 	public static <T> java.util.List<T> deserializeList(String json, Class<?> clazz) {
@@ -94,10 +113,10 @@ public class JsonUtils {
 			if (StringUtils.isBlank(json)) {
 				return new ArrayList<>();
 			}
-			JavaType type = getCollectionType(CUSTOMER, ArrayList.class, clazz);
-			return CUSTOMER.readValue(json, type);
+			JavaType type = constructCollectionType(getAssociativeMapping(), ArrayList.class, clazz);
+			return getAssociativeMapping().readValue(json, type);
 		} catch (IOException e) {
-			throw new RuntimeException(clazz + "类型对象集合反序列化出错");
+			throw new FrameworkException(clazz + "类型对象集合反序列化出错");
 		}
 	}
 
@@ -112,9 +131,9 @@ public class JsonUtils {
 			if (value == null) {
 				return null;
 			}
-			return CUSTOMER.writeValueAsString(value);
+			return getAssociativeMapping().writeValueAsString(value);
 		} catch (JsonProcessingException e) {
-			throw new RuntimeException(value.getClass() + "类型对象解析出错");
+			throw new FrameworkException(value.getClass() + "类型对象解析出错");
 		}
 	}
 
@@ -125,12 +144,12 @@ public class JsonUtils {
 	 * @param value 对象
 	 * @return json
 	 */
-	public static String writeValueAsString(Object value) {
+	public static String writeValue(Object value) {
 		try {
 			if (value == null) {
 				return null;
 			}
-			return ORIGINAL.writeValueAsString(value);
+			return getCustomMapping().writeValueAsString(value);
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(value.getClass() + "类型对象解析出错", e);
 		}
@@ -147,14 +166,22 @@ public class JsonUtils {
 	 */
 	public static <T> T readValue(String json, Class<?> clazz) {
 		try {
-			T d = (T) ORIGINAL.readValue(json, clazz);
+			T d = (T) getCustomMapping().readValue(json, clazz);
 			return d;
 		} catch (IOException e) {
 			throw new RuntimeException(clazz + "类型对象解析出错", e);
 		}
 	}
 
-	public static CollectionType getCollectionType(ObjectMapper mapper, Class<? extends Collection> collectionClass, Class<?> elementClasses) {
+	/**
+	 * 构造集合类型
+	 *
+	 * @param mapper          mapper对象
+	 * @param collectionClass 集合类型
+	 * @param elementClasses  集合元素类型
+	 * @return
+	 */
+	private static CollectionType constructCollectionType(ObjectMapper mapper, Class<? extends Collection> collectionClass, Class<?> elementClasses) {
 		return mapper.getTypeFactory().constructCollectionType(collectionClass, elementClasses);
 	}
 

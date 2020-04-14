@@ -1,37 +1,25 @@
 package com.egova.exception;
 
+import lombok.Data;
+
 /**
  * 带有状态码的异常
- *
- *
+ * @author chendb
  */
+@Data
 public class StatefulException extends RuntimeException {
-	private static final long serialVersionUID = 6057602589533840889L;
+	private static final long serialVersionUID = 7419115665474379007L;
 
-	// 异常状态码
+	/**
+	 * 异常状态码
+	 */
 	private int status;
 
 	public StatefulException() {
 	}
 
-	public StatefulException(String msg) {
-		super(msg);
-	}
-
-	public StatefulException(String messageTemplate, Object... params) {
-		super(String.format(messageTemplate, params));
-	}
-
-	public StatefulException(Throwable throwable) {
-		super(throwable);
-	}
-
-	public StatefulException(String msg, Throwable throwable) {
-		super(msg, throwable);
-	}
-
-	public StatefulException(int status, String msg) {
-		super(msg);
+	public StatefulException(int status, String message) {
+		super(message);
 		this.status = status;
 	}
 
@@ -40,15 +28,9 @@ public class StatefulException extends RuntimeException {
 		this.status = status;
 	}
 
-	public StatefulException(int status, String msg, Throwable throwable) {
-		super(msg, throwable);
+	public StatefulException(int status, String message, Throwable throwable) {
+		super(message, throwable);
 		this.status = status;
 	}
 
-	/**
-	 * @return 获得异常状态码
-	 */
-	public int getStatus() {
-		return status;
-	}
 }

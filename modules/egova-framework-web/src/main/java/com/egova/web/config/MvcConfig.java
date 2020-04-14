@@ -1,11 +1,11 @@
 package com.egova.web.config;
 
-import com.egova.json.databind.ObjectMappingCustomer;
 import com.egova.web.converter.StringToBooleanConverter;
 import com.egova.web.converter.StringToEnumConverterFactory;
 import com.egova.web.converter.StringToTimestampConverter;
 import com.egova.web.restful.DecoratingHandlerMapping;
 import com.egova.web.restful.HandlerMethodInterceptor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
@@ -43,7 +43,8 @@ public class MvcConfig extends WebMvcConfigurationSupport
 	@Autowired(required = false)
 	private List<HandlerMethodInterceptor> handlerMethodInterceptors;
 
-
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	@Override
 	protected RequestMappingHandlerMapping createRequestMappingHandlerMapping()
@@ -61,14 +62,13 @@ public class MvcConfig extends WebMvcConfigurationSupport
 
 	@Override
 	protected void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-		ObjectMappingCustomer objectMappingCustomer = new ObjectMappingCustomer();
 		if (converters.isEmpty()) {
 			MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
 			converters.add(converter);
 		}
 		for (HttpMessageConverter converter : converters) {
 			if (converter instanceof MappingJackson2HttpMessageConverter) {
-				((MappingJackson2HttpMessageConverter) converter).setObjectMapper(objectMappingCustomer);
+				((MappingJackson2HttpMessageConverter) converter).setObjectMapper(objectMapper);
 			}
 		}
 		super.configureMessageConverters(converters);

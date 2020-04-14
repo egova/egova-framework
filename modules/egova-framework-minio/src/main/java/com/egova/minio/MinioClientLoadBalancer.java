@@ -1,6 +1,6 @@
 package com.egova.minio;
 
-import com.egova.exception.BusinessException;
+import com.egova.exception.FrameworkException;
 import io.minio.MinioClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +46,7 @@ public class MinioClientLoadBalancer implements LoadBalancer<MinioClient> {
                 LOG.info("prepare init minio client: {}", endpoint);
                 return new MinioClient(endpoint, properties.getAccessKey(), properties.getSecretKey());
             } catch (Exception e) {
-                throw new BusinessException(e);
+                throw new FrameworkException(e);
             }
         }).collect(Collectors.toList());
     }
@@ -54,7 +54,7 @@ public class MinioClientLoadBalancer implements LoadBalancer<MinioClient> {
     @Override
     public MinioClient get() {
         return Optional.ofNullable(rule.choose(clients))
-                .orElseThrow(() -> new BusinessException("minio client unavailable."));
+                .orElseThrow(() -> new FrameworkException("minio client unavailable."));
     }
 
 }

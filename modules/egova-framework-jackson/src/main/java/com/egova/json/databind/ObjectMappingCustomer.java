@@ -24,10 +24,12 @@ public class ObjectMappingCustomer extends ObjectMapper {
      */
     private static final long serialVersionUID = 1572846160494272924L;
 
+
     /**
      * 构造函数
+     * @param enableAssociative 是否启用联想注解
      */
-    public ObjectMappingCustomer() {
+    public ObjectMappingCustomer(boolean enableAssociative) {
         super();
         // 允许单引号
         this.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
@@ -40,6 +42,7 @@ public class ObjectMappingCustomer extends ObjectMapper {
 
         // 大小写不敏感
         this.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+
 
         // 设置日期格式
         this.setDateFormat(new CustomDateFormat());
@@ -57,7 +60,7 @@ public class ObjectMappingCustomer extends ObjectMapper {
                                                       JsonSerializer<?> serializer) {
 
                 if (ExtensibleObject.class.isAssignableFrom(beanDesc.getBeanClass())) {
-                    return new ExtensibleObjectSerializer((BeanSerializerBase) serializer);
+                    return new ExtensibleObjectSerializer((BeanSerializerBase) serializer, enableAssociative);
                 } else if (CodeType.class.isAssignableFrom(beanDesc.getBeanClass())) {
                     return new CodeTypeJsonSerializer();
                 }

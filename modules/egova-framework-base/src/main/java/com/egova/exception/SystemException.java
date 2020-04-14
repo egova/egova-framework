@@ -10,7 +10,7 @@ public class SystemException extends RuntimeException {
     /**
      * 
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 7239207816552396911L;
 
     /**
      * 构造函数

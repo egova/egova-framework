@@ -1,5 +1,6 @@
 package com.egova.security.web.session;
 
+import com.egova.json.JsonMapping;
 import com.egova.security.core.properties.BrowserProperties;
 import org.springframework.security.web.session.SessionInformationExpiredEvent;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
@@ -10,8 +11,8 @@ public class ExpiredSessionStrategy extends AbstractSessionStrategy implements S
 {
 
 
-	public ExpiredSessionStrategy(BrowserProperties browserProperties) {
-		super(browserProperties);
+	public ExpiredSessionStrategy(JsonMapping jsonMapping, BrowserProperties browserProperties) {
+		super(jsonMapping,browserProperties);
 	}
 
 	/* (non-Javadoc)
