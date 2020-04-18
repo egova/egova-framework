@@ -22,10 +22,10 @@ import java.util.Objects;
 /**
  * 二级缓层方案的自动配置类
  */
-@Configuration
+//@Configuration
 @AutoConfigureAfter(RedisAutoConfiguration.class)
 @EnableConfigurationProperties(RedisEhcacheProperties.class)
-public class CacheRedisEhcacheAutoConfiguration {
+public class CacheAutoConfiguration {
 
     @Autowired
     private RedisEhcacheProperties redisEhcacheProperties;

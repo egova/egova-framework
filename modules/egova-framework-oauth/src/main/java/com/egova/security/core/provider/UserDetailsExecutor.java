@@ -1,26 +1,36 @@
 package com.egova.security.core.provider;
 
-import com.flagwind.application.Application;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class UserDetailsExecutor
-{
-	private static Iterable<UserDetailsProvider> getServices()
-	{
-		return Application.resolveAll(UserDetailsProvider.class);
-	}
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-	public static UserDetails execute(String username)
-	{
+public class UserDetailsExecutor {
+    private ApplicationContext applicationContext;
 
-		for(UserDetailsProvider provider : getServices())
-		{
-			UserDetails clientDetails = provider.loadUserByUsername(username);
-			if(clientDetails != null)
-			{
-				return clientDetails;
-			}
-		}
-		return null;
-	}
+    public UserDetailsExecutor(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    private Iterable<UserDetailsProvider> getServices() {
+        Map<String, UserDetailsProvider> map = applicationContext.getBeansOfType(UserDetailsProvider.class);
+        List<UserDetailsProvider> list = new ArrayList<>(map.values());
+        AnnotationAwareOrderComparator.sort(list);
+        return list;
+    }
+
+
+    public UserDetails execute(String username) {
+
+        for (UserDetailsProvider provider : getServices()) {
+            UserDetails clientDetails = provider.loadUserByUsername(username);
+            if (clientDetails != null) {
+                return clientDetails;
+            }
+        }
+        return null;
+    }
 }

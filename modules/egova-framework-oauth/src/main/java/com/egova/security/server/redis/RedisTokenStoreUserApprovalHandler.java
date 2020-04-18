@@ -13,7 +13,7 @@ import java.util.Collection;
 
 /**
  * Redis版本的TokenStoreUserApprovalHandler实现（是种服务组合）
- * 
+ *
  * @author chendb
  * @date 2016年12月8日 下午5:54:35
  */
@@ -23,17 +23,17 @@ public class RedisTokenStoreUserApprovalHandler extends ApprovalStoreUserApprova
 
     /**
      * 构造函数
-     * @param tokenApprovalStore ApprovalStorep接口实现（这里可输入redis版本实现）
+     *
+     * @param tokenApprovalStore   ApprovalStorep接口实现（这里可输入redis版本实现）
      * @param clientDetailsService ClientDetailsService接口实现（这里可输入redis版本实现）
      */
     public RedisTokenStoreUserApprovalHandler(ApprovalStore tokenApprovalStore,
-            ClientDetailsService clientDetailsService) {
+                                              ClientDetailsService clientDetailsService) {
         this.clientDetailsService = clientDetailsService;
         this.setApprovalStore(tokenApprovalStore);
         this.setClientDetailsService(clientDetailsService);
         this.setRequestFactory(new DefaultOAuth2RequestFactory(clientDetailsService));
         this.setUseApprovalStore(true);
-
     }
 
     private boolean useApprovalStore = true;
@@ -44,15 +44,14 @@ public class RedisTokenStoreUserApprovalHandler extends ApprovalStoreUserApprova
 
     @Override
     public AuthorizationRequest checkForPreApproval(AuthorizationRequest authorizationRequest,
-            Authentication userAuthentication) {
+                                                    Authentication userAuthentication) {
 
         boolean approved = false;
 
         if (useApprovalStore) {
             authorizationRequest = super.checkForPreApproval(authorizationRequest, userAuthentication);
             approved = authorizationRequest.isApproved();
-        }
-        else {
+        } else {
             if (clientDetailsService != null) {
                 Collection<String> requestedScopes = authorizationRequest.getScope();
                 try {
@@ -64,8 +63,7 @@ public class RedisTokenStoreUserApprovalHandler extends ApprovalStoreUserApprova
                             break;
                         }
                     }
-                }
-                catch (ClientRegistrationException e) {
+                } catch (ClientRegistrationException e) {
                 }
             }
         }

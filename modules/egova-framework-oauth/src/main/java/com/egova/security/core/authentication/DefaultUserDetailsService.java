@@ -10,11 +10,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  */
 public class DefaultUserDetailsService implements UserDetailsService
 {
+	private UserDetailsExecutor userDetailsExecutor;
+
+	public DefaultUserDetailsService(UserDetailsExecutor UserDetailsExecutor) {
+		this.userDetailsExecutor = UserDetailsExecutor;
+	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
 	{
-		return UserDetailsExecutor.execute(username);
+		return userDetailsExecutor.execute(username);
 	}
 
 }

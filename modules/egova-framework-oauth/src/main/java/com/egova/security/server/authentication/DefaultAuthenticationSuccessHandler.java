@@ -12,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +22,6 @@ import java.io.IOException;
  * 默认的认证成功的结果处理类
  */
 @EnableConfigurationProperties(BrowserProperties.class)
-@Component
 public class DefaultAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 

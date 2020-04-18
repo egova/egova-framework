@@ -1,7 +1,7 @@
 package com.egova.json.databind.std;
 
 
-import com.egova.json.databind.JsonAssociativeExecutor;
+import com.egova.associative.AssociativeExecutor;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -150,7 +150,7 @@ public class ExtensibleObjectSerializer extends BeanSerializerBase {
 
         if (this.enableAssociative) {
             // 检测联想属性配置并增加到扩展字段中
-            JsonAssociativeExecutor.execute(entity);
+            AssociativeExecutor.execute(entity);
         }
 
         Map<String, Object> extras = entity.getExtras();

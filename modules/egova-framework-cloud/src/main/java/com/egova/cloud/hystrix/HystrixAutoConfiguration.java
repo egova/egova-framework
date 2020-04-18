@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.cloud.netflix.hystrix.security.HystrixSecurityAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 
@@ -22,7 +21,7 @@ import javax.annotation.PostConstruct;
  * @author 奔波儿灞
  * @since 1.0
  */
-@Configuration
+//@Configuration
 @AutoConfigureAfter(HystrixSecurityAutoConfiguration.class)
 public class HystrixAutoConfiguration {
 

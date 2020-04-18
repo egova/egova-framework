@@ -1,4 +1,4 @@
-package com.egova.web.config.parameter;
+package com.egova.web.config.mvc;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

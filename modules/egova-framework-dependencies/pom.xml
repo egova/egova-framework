@@ -15,7 +15,7 @@
 
 
     <properties>
-        <flagwind-core.version>1.0.13</flagwind-core.version>
+        <flagwind-core.version>2.0.0-SNAPSHOT</flagwind-core.version>
         <kafka.version>2.3.0</kafka.version>
         <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
         <jdk.version>1.8</jdk.version>
@@ -171,6 +171,13 @@
                 <artifactId>spring-messaging</artifactId>
                 <version>5.1.2.RELEASE</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+                <version>5.1.2.RELEASE</version>
+            </dependency>
+
 
             <dependency>
                 <groupId>org.springframework.shell</groupId>

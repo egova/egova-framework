@@ -6,7 +6,6 @@ import io.minio.MinioClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * minio模块配置
@@ -14,9 +13,9 @@ import org.springframework.context.annotation.Configuration;
  * @author 奔波儿灞
  * @since 1.0
  */
-@Configuration
+//@Configuration
 @EnableConfigurationProperties(MinioProperties.class)
-public class MinioConfiguration {
+public class MinioAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean

@@ -1,4 +1,4 @@
-package com.egova.web.restful;
+package com.egova.web.rest;
 
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 

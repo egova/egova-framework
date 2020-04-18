@@ -13,10 +13,12 @@ import org.springframework.security.oauth2.provider.ClientRegistrationException;
 public class DefaultClientDetailsService implements ClientDetailsService
 {
 	private ClientDetailsService clientDetailsService;
+	private ClientDetailsExecutor clientDetailsExecutor;
 
-	public DefaultClientDetailsService(ClientDetailsService clientDetailsService)
+	public DefaultClientDetailsService(ClientDetailsService clientDetailsService,ClientDetailsExecutor clientDetailsExecutor)
 	{
 		this.clientDetailsService = clientDetailsService;
+		this.clientDetailsExecutor = clientDetailsExecutor;
 
 	}
 
@@ -27,7 +29,7 @@ public class DefaultClientDetailsService implements ClientDetailsService
 		if(StringUtils.isEmpty(clientId)){
 			return null;
 		}
-		ClientDetails clientDetails = ClientDetailsExecutor.execute(clientId);
+		ClientDetails clientDetails = clientDetailsExecutor.execute(clientId);
 		if(clientDetails != null)
 		{
 			return clientDetails;

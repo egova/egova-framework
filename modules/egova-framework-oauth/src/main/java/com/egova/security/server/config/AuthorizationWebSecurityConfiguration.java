@@ -3,6 +3,7 @@ package com.egova.security.server.config;
 
 import com.egova.security.core.authentication.DefaultUserDetailsService;
 import com.egova.security.core.properties.BrowserProperties;
+import com.egova.security.core.provider.UserDetailsExecutor;
 import com.egova.security.web.config.BrowserSecurityConfiguration;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,50 +27,47 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableConfigurationProperties(BrowserProperties.class)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
-public class AuthorizationWebSecurityConfiguration extends BrowserSecurityConfiguration
-{
+public class AuthorizationWebSecurityConfiguration extends BrowserSecurityConfiguration {
 
-	private final BeanFactory beanFactory;
+    private final BeanFactory beanFactory;
 
-	@Autowired
-	public AuthorizationWebSecurityConfiguration(BeanFactory beanFactory)
-	{
+    @Autowired
+    private UserDetailsExecutor userDetailsExecutor;
 
-		this.beanFactory = beanFactory;
-	}
+    @Autowired
+    public AuthorizationWebSecurityConfiguration(BeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
+    }
 
-	/**
-	 * 默认认证器
-	 */
-	@Bean
-	public DefaultUserDetailsService defaultUserDetailsService()
-	{
-		return new DefaultUserDetailsService();
-	}
+    /**
+     * 默认认证器
+     */
+    @Bean
+    public DefaultUserDetailsService defaultUserDetailsService() {
+        return new DefaultUserDetailsService(userDetailsExecutor);
+    }
 
-	@Bean(name = "daoAuthenticationProvider")
-	public AuthenticationProvider daoAuthenticationProvider(PasswordEncoder passwordEncoder, DefaultUserDetailsService userDetailsService)
-	{
-		DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-		daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-		daoAuthenticationProvider.setHideUserNotFoundExceptions(false);
-		daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-		return daoAuthenticationProvider;
-	}
+    @Bean(name = "daoAuthenticationProvider")
+    public AuthenticationProvider daoAuthenticationProvider(PasswordEncoder passwordEncoder, DefaultUserDetailsService userDetailsService) {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+        daoAuthenticationProvider.setHideUserNotFoundExceptions(false);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+        return daoAuthenticationProvider;
+    }
 
 
-	@Bean(name = BeanIds.AUTHENTICATION_MANAGER)
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean();
-	}
+    @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
-	@Override
-	public void configure(AuthenticationManagerBuilder auth)
-	{
-		AuthenticationProvider daoAuthenticationProvider = beanFactory.getBean("daoAuthenticationProvider", AuthenticationProvider.class);
-		auth.authenticationProvider(daoAuthenticationProvider);
-	}
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) {
+        AuthenticationProvider daoAuthenticationProvider = beanFactory.getBean("daoAuthenticationProvider", AuthenticationProvider.class);
+        auth.authenticationProvider(daoAuthenticationProvider);
+    }
 
 
 }

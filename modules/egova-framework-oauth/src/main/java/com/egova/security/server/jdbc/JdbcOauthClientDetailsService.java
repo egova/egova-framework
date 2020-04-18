@@ -2,17 +2,16 @@ package com.egova.security.server.jdbc;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
-import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 
 /**
  * jdbc oauth_client_details数据查询服务
- * 
+ *
  * @author chendb
  * @date 2016年12月8日 下午5:37:01
  */
-@Component
+//@Component
 public class JdbcOauthClientDetailsService extends JdbcClientDetailsService {
 
     private static final String SELECT_CLIENT_DETAILS_SQL = "select client_id, client_secret, "
@@ -22,7 +21,7 @@ public class JdbcOauthClientDetailsService extends JdbcClientDetailsService {
 
     /**
      * 构造函数
-     * 
+     *
      * @param dataSource 数据源
      */
     @Autowired

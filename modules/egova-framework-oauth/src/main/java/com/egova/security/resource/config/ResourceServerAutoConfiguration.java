@@ -1,6 +1,7 @@
 package com.egova.security.resource.config;
 
 import com.egova.security.core.properties.SecurityProperties;
+import com.egova.security.utils.SecurityConfigurationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
@@ -15,7 +16,8 @@ import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHand
  * 该类是资源服务器安全配置类与@EnableResourceServer作用相同
  */
 @EnableConfigurationProperties(SecurityProperties.class)
-@Import({ResourceServerAutoConfiguration.UnityResourceServer.class, ResourceServerAutoConfiguration.MobileResourceServer.class})
+
+@Import({ResourceBeanConfig.class, ResourceServerAutoConfiguration.UnityResourceServer.class, ResourceServerAutoConfiguration.MobileResourceServer.class})
 public class ResourceServerAutoConfiguration extends ResourceServerConfiguration {
     private int order = 6;
 
@@ -64,17 +66,7 @@ public class ResourceServerAutoConfiguration extends ResourceServerConfiguration
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER).and().exceptionHandling()
                     .accessDeniedHandler(oAuth2AccessDeniedHandler);
             // @formatter:on
-            switch (securityProperties.getXFrameOptions()) {
-                case ALLOW_FROM:
-                    http.headers().frameOptions().disable();
-                    break;
-                case SAMEORIGIN:
-                    http.headers().frameOptions().sameOrigin();
-                    break;
-                case DENY:
-                    http.headers().frameOptions().deny();
-                    break;
-            }
+            SecurityConfigurationUtils.configure(http, securityProperties);
         }
 
         @Override
@@ -104,17 +96,7 @@ public class ResourceServerAutoConfiguration extends ResourceServerConfiguration
                     .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER).and()
                     .exceptionHandling().accessDeniedHandler(oAuth2AccessDeniedHandler);
             // @formatter:on
-            switch (securityProperties.getXFrameOptions()) {
-                case ALLOW_FROM:
-                    http.headers().frameOptions().disable();
-                    break;
-                case SAMEORIGIN:
-                    http.headers().frameOptions().sameOrigin();
-                    break;
-                case DENY:
-                    http.headers().frameOptions().deny();
-                    break;
-            }
+            SecurityConfigurationUtils.configure(http, securityProperties);
         }
 
         @Override

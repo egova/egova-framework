@@ -28,9 +28,9 @@ import java.util.List;
  * @author 奔波儿灞
  * @since 1.0
  */
-@Configuration
+//@Configuration
 @ConditionalOnClass(Feign.class)
-@EnableFeignClients("com.egova")
+//@EnableFeignClients("com.egova")
 @EnableConfigurationProperties({FeignClientProperties.class, FeignHttpClientProperties.class})
 public class FeignAutoConfiguration {
 

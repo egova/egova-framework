@@ -1,15 +1,14 @@
-package com.egova.json.databind;
+package com.egova.associative;
 
+
+import com.egova.utils.EntityAnnotationUtils;
+import com.flagwind.application.Application;
 import com.flagwind.commons.StringUtils;
 import com.flagwind.lang.ExtensibleObject;
-import com.flagwind.persistent.AssociativeEntry;
-import com.flagwind.persistent.AssociativeProvider;
-import com.flagwind.persistent.AssociativeProviderFactory;
 import com.flagwind.reflect.EntityTypeHolder;
 import com.flagwind.reflect.entities.EntityField;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.ParserContext;
@@ -22,8 +21,9 @@ import java.util.Set;
 /**
  * json序列化联想动作执行器
  */
-public class JsonAssociativeExecutor {
-    private static Log LOG = LogFactory.getLog(JsonAssociativeExecutor.class);
+public class AssociativeExecutor {
+
+    private static Log LOG = LogFactory.getLog(AssociativeExecutor.class);
 
 
     private static String getExpressionValue(String expression, ExtensibleObject obj, EntityField field) {
@@ -55,7 +55,7 @@ public class JsonAssociativeExecutor {
         return v == null ? field.getName() + "Text" : v.toString();
     }
 
-    private static void setAssociativeField(JsonAssociative associative,ExtensibleObject obj,EntityField field) {
+    private static void setAssociativeField(Associative associative, ExtensibleObject obj, EntityField field) {
 
 
         String newFieldName = StringUtils.isBlank(associative.name()) ? field.getName() + "Text" : associative.name();
@@ -66,19 +66,20 @@ public class JsonAssociativeExecutor {
             newFieldName = newFieldName.replace("${", "#{");
         }
         if (newFieldName.contains("#{")) {
-            newFieldName = getExpressionValue(newFieldName,obj,field);
+            newFieldName = getExpressionValue(newFieldName, obj, field);
         }
         if (obj.contains(newFieldName)) {
             return;
         }
-        AssociativeProvider provider = AssociativeProviderFactory.instance().resolve(associative.source());
+        AssociativeProvider provider = Application.resolve(associative.provider());
         if (provider == null) {
-            LOG.error(String.format("没有找到名为%s的AssociativeProvider对象", associative.source()));
+            LOG.error(String.format("没有找到名为%s的AssociativeProvider对象", associative.provider()));
             return;
         }
         try {
             Object v = field.getValue(obj, null);
-            AssociativeEntry entry = new AssociativeEntry(newFieldName, associative.source(), associative.extras());
+            AssociativeEntry entry = new AssociativeEntry(newFieldName, associative.provider(), associative.extras());
+
             entry.execute(obj, v);
         } catch (Exception ex) {
             LOG.error(String.format("%s对象json 联想序列化%s字段时异常", obj.getClass().getSimpleName(), field.getName()), ex);
@@ -86,7 +87,7 @@ public class JsonAssociativeExecutor {
 
     }
 
-    public static Object getAssociativeValue(EntityField field,Object obj) {
+    public static Object getAssociativeValue(EntityField field, Object obj) {
         Object v;
         try {
             v = field.getValue(obj, null);
@@ -95,20 +96,17 @@ public class JsonAssociativeExecutor {
             return null;
         }
 
-        Set<JsonAssociative> associatives = field.getRepeatableAnnotations(JsonAssociative.class);
+        Set<Associative> associatives = EntityAnnotationUtils.getMergedRepeatableAnnotations(field, Associative.class);
 
-        if (associatives.isEmpty()) {
-            associatives = AnnotatedElementUtils.getMergedRepeatableAnnotations(field.getJavaType(), JsonAssociative.class);
-        }
 
-        for (JsonAssociative associative : associatives) {
+        for (Associative associative : associatives) {
 
-            AssociativeProvider provider = AssociativeProviderFactory.instance().resolve(associative.source());
+            AssociativeProvider provider = Application.resolve(associative.provider());
             if (provider == null) {
-                LOG.error(String.format("没有找到名为%s的AssociativeProvider对象", associative.source()));
+                LOG.error(String.format("没有找到名为%s的AssociativeProvider对象", associative.provider()));
                 return null;
             }
-            AssociativeEntry entry = new AssociativeEntry(null, associative.source(), associative.extras());
+            AssociativeEntry entry = new AssociativeEntry(null, associative.provider(), associative.extras());
             return entry.getAssociateValue(v);
         }
         return v;
@@ -118,12 +116,9 @@ public class JsonAssociativeExecutor {
         List<EntityField> fields = EntityTypeHolder.getFields(obj.getClass());
         for (EntityField field : fields) {
             try {
-                Set<JsonAssociative> associatives = field.getRepeatableAnnotations(JsonAssociative.class);
+                Set<Associative> associatives = EntityAnnotationUtils.getMergedRepeatableAnnotations(field, Associative.class);
 
-                if(associatives.isEmpty()) {
-                    associatives = AnnotatedElementUtils.getMergedRepeatableAnnotations(field.getJavaType(), JsonAssociative.class);
-                }
-                for (JsonAssociative associative : associatives) {
+                for (Associative associative : associatives) {
                     setAssociativeField(associative, obj, field);
                 }
             } catch (Exception ex) {

@@ -1,16 +1,31 @@
 package com.egova.security.core.provider;
 
-import com.flagwind.application.Application;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.security.oauth2.provider.ClientDetails;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ClientDetailsExecutor
 {
-	private static Iterable<ClientDetailsProvider> getServices()
-	{
-		return Application.resolveAll(ClientDetailsProvider.class);
+	private ApplicationContext applicationContext;
+
+
+	public ClientDetailsExecutor(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
 	}
 
-	public static ClientDetails execute(String clientId)
+	private  Iterable<ClientDetailsProvider> getServices()
+	{
+		Map<String, ClientDetailsProvider> map = applicationContext.getBeansOfType(ClientDetailsProvider.class);
+		List<ClientDetailsProvider> list = new ArrayList<>(map.values());
+		AnnotationAwareOrderComparator.sort(list);
+		return list;
+	}
+
+	public  ClientDetails execute(String clientId)
 	{
 
 		for(ClientDetailsProvider provider : getServices())

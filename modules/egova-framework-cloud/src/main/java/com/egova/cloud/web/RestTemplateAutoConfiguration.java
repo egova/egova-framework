@@ -4,7 +4,6 @@ import org.apache.http.client.HttpClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -21,7 +20,7 @@ import java.nio.charset.StandardCharsets;
  * @author 奔波儿灞
  * @since 1.0
  */
-@Configuration
+//@Configuration
 public class RestTemplateAutoConfiguration {
 
     private static final int CONNECT_TIMEOUT = 3000;
