@@ -8,16 +8,22 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
+ * @description: 上下文监听,用于最早获取到ApplicationContext对象。
+ * *************注意************
+ * 1、下面重写的方法有很多空的实现，但是不能去掉，否则会报错
+ * 2、这个类要配合 spring.factories 才能达到效果，目前配置见文件内容
+ * ****************************
+ *
  * @author chendb
- * @description: 上下文监听
  * @date 2020-04-18 22:32:43
  */
 @Slf4j
 public class ApplicationContextListener implements SpringApplicationRunListener {
 
-    public ApplicationContextListener(SpringApplication application, String[]  args){
+    public ApplicationContextListener(SpringApplication application, String[] args) {
         log.info("constructor");
     }
+
 
     @Override
     public void starting() {
@@ -52,7 +58,6 @@ public class ApplicationContextListener implements SpringApplicationRunListener 
 
     @Override
     public void contextPrepared(ConfigurableApplicationContext context) {
-//
-//        Application.start(new Context(context));
+        log.info("context prepared");
     }
 }
