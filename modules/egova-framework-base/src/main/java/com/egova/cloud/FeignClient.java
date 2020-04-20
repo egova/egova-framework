@@ -13,6 +13,7 @@ import java.lang.annotation.*;
  * @author Spencer Gibb
  * @author Venil Noronha
  */
+@SuppressWarnings("JavadocReference")
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
