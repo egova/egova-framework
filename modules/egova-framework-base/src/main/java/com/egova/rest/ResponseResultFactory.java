@@ -1,5 +1,6 @@
 package com.egova.rest;
 
+import java.io.Reader;
 
 /**
  * 响应结果对象工厂（各部门需要实现该接口来创建自己的结果包装类）
@@ -25,4 +26,21 @@ public interface ResponseResultFactory {
      * @date 2020-04-09 23:16
      */
     <T> ResponseResult<T> error(String message);
+
+    /**
+     * 将 reader 反序列化为 ResponseResult 实现类
+     *
+     * @param reader JSON reader
+     * @return ResponseResult 实现类
+     */
+    <T> ResponseResult<T> deserialize(Reader reader);
+
+    /**
+     * 将 reader 反序列化为 ResponseResult 实现类
+     *
+     * @param json JSON字符串
+     * @return ResponseResult 实现类
+     */
+    <T> ResponseResult<T> deserialize(String json);
+
 }

@@ -2,6 +2,8 @@ package com.egova.rest;
 
 import com.flagwind.application.Application;
 
+import java.io.Reader;
+
 /**
  * 响应结果工具类
  *
@@ -65,5 +67,27 @@ public class ResponseResults {
      */
     public static <T> ResponseResult<T> error(String message) {
         return getFactory().error(message);
+    }
+
+    /**
+     * 将 reader 反序列化为 ResponseResult 实现类
+     *
+     * @param reader JSON reader
+     * @param <T>    泛型约束
+     * @return ResponseResult 实现类
+     */
+    public static <T> ResponseResult<T> deserialize(Reader reader) {
+        return getFactory().deserialize(reader);
+    }
+
+    /**
+     * 将 reader 反序列化为 ResponseResult 实现类
+     *
+     * @param json JSON 字符串
+     * @param <T>  泛型约束
+     * @return ResponseResult 实现类
+     */
+    public static <T> ResponseResult<T> deserialize(String json) {
+        return getFactory().deserialize(json);
     }
 }

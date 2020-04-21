@@ -4,6 +4,7 @@ package com.egova.cloud.feign;
 import com.egova.exception.FrameworkException;
 import com.egova.json.JsonMapping;
 import com.egova.rest.ResponseResult;
+import com.egova.rest.ResponseResults;
 import feign.FeignException;
 import feign.Response;
 import feign.codec.Decoder;
@@ -17,7 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 /**
- * OperateResult拆包
+ * ResponseResult 拆包
  *
  * @author 奔波儿灞
  * @since 1.0
@@ -36,10 +37,11 @@ public class ResponseResultDecoder implements Decoder {
 
     @Override
     public Object decode(Response response, Type type) throws IOException, FeignException {
-        // 接收类型不是OperateResult，则拆包
+        // 接收类型不是 ResponseResult，则拆包
         if (!isResponseResult(type) && isJsonResponse(response)) {
             LOG.debug("返回类型不是OperateResult，拆包类型: {}", type.getClass().getName());
-            ResponseResult result = jsonMapping.deserialize(response.body().asReader(StandardCharsets.UTF_8), ResponseResult.class);
+            // 委托给 ResponseResults 实例化
+            ResponseResult result = ResponseResults.deserialize(response.body().asReader(StandardCharsets.UTF_8));
             if (result.getHasError()) {
                 LOG.debug("返回结果存在错误: {}", result.getMessage());
                 throw new FrameworkException(result.getMessage());
