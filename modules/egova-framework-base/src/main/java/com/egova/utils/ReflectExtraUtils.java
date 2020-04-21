@@ -8,14 +8,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-
 /**
  * 反射工具
  *
  * @author chenabao
  */
 public class ReflectExtraUtils {
-
 
     /**
      * 获取字段值
@@ -26,25 +24,22 @@ public class ReflectExtraUtils {
      * @throws Exception
      */
     public static Object getFieldValue(Object object, Field field) {
-
         try {
 
             Method m = object.getClass().getMethod("get" + convertFirstUpper(field.getName()));
 
             Class<?> clazz = object.getClass();
 
-            if (m == null && (field.getGenericType().toString().equals("boolean")
-                    || field.getGenericType().toString()
-                    .equals("class java.lang.Boolean"))) {
+            if (m == null && ("boolean".equals(field.getGenericType().toString())
+                    || "class java.lang.Boolean"
+                    .equals(field.getGenericType().toString()))) {
                 m = clazz.getMethod("is" + convertFirstUpper(field.getName()));
             }
-            return m.invoke(object);// 调用getter方法获取属性值
-
+            // 调用getter方法获取属性值
+            return m.invoke(object);
         } catch (NoSuchMethodException e) {
             throw new FrameworkException("没有找到字段的get方法", e);
-        } catch (IllegalAccessException e) {
-            throw new FrameworkException("不能访问该字段的get方法", e);
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             throw new FrameworkException("不能访问该字段的get方法", e);
         }
     }
@@ -124,7 +119,6 @@ public class ReflectExtraUtils {
         }
     }
 
-
     /**
      * 获取字段的注解
      *
@@ -136,7 +130,6 @@ public class ReflectExtraUtils {
      */
     public static <T extends Annotation> T getAnnotation(Class<?> clazz,
                                                          String fieldName, Class<T> annotationClass) {
-
         try {
 
             T annotation = getFieldAnnotation(clazz, fieldName, annotationClass);
@@ -150,7 +143,6 @@ public class ReflectExtraUtils {
         }
     }
 
-
     /**
      * 获取字段注解
      *
@@ -162,7 +154,6 @@ public class ReflectExtraUtils {
      */
     public static <T extends Annotation> T getFieldAnnotation(Class<?> clazz,
                                                               String fieldName, Class<T> annotationClass) {
-
         try {
 
             Field field = clazz.getDeclaredField(fieldName);
@@ -179,7 +170,6 @@ public class ReflectExtraUtils {
 
     public static <T extends Annotation> T getMethodAnnotation(Class<?> clazz,
                                                                String fieldName, Class<T> annotationClass) {
-
         try {
             String methodName = "get" + StringUtils.capitalize(fieldName);
             Method method = clazz.getDeclaredMethod(methodName);

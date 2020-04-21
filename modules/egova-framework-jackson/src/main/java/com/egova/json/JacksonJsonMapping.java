@@ -11,9 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @description: 架构json操作类实现
- *
  * @author chendb
+ * @description: 架构json操作类实现
  * @date 2020-04-14 15:30:12
  */
 public class JacksonJsonMapping implements JsonMapping {
@@ -43,12 +42,22 @@ public class JacksonJsonMapping implements JsonMapping {
     }
 
     @Override
-    public <T> List<T> deserializeList(String json, Class<T> elementClass) {
+    public <T> List<T> deserializeList(String json, Class<T> clazz) {
         try {
-            CollectionType collectionType = objectMappingCustomer.getTypeFactory().constructCollectionType(ArrayList.class, elementClass);
+            CollectionType collectionType = objectMappingCustomer.getTypeFactory().constructCollectionType(ArrayList.class, clazz);
             return objectMappingCustomer.readValue(json, collectionType);
         } catch (IOException e) {
-            throw new FrameworkException(elementClass + "元素数组反序列化异常", e);
+            throw new FrameworkException(clazz + "元素数组反序列化异常", e);
+        }
+    }
+
+    @Override
+    public <T> List<T> deserializeList(Reader reader, Class<T> clazz) {
+        try {
+            CollectionType collectionType = objectMappingCustomer.getTypeFactory().constructCollectionType(ArrayList.class, clazz);
+            return objectMappingCustomer.readValue(reader, collectionType);
+        } catch (IOException e) {
+            throw new FrameworkException(clazz + "元素数组反序列化异常", e);
         }
     }
 

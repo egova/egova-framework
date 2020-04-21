@@ -1,12 +1,11 @@
 package com.egova.exception;
 
 /**
- * @description: 架构异常
- *
  * @author chendb
+ * @description: 架构异常
  * @date 2020-04-14 14:01:03
  */
-public class FrameworkException  extends RuntimeException {
+public class FrameworkException extends RuntimeException {
 
     public FrameworkException(String message) {
         super(message);

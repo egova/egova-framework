@@ -5,6 +5,7 @@ import lombok.Data;
 
 /**
  * 业务运行时异常
+ *
  * @author chendb
  * @date 2016年12月8日 下午11:23:51
  */
@@ -12,7 +13,6 @@ import lombok.Data;
 public class BusinessException extends StatefulException {
 
     private static final long serialVersionUID = -6447910316357429620L;
-
 
     public BusinessException(int status, String message) {
         super(status, message);

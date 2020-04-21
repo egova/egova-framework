@@ -15,8 +15,7 @@ public class ResponseResults {
      * @return
      */
     private static ResponseResultFactory getFactory() {
-        ResponseResultFactory factory = Application.resolve(ResponseResultFactory.class);
-        return factory;
+        return Application.resolve(ResponseResultFactory.class);
     }
 
     /**
