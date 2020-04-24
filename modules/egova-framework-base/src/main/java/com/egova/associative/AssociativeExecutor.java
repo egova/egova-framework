@@ -55,6 +55,17 @@ public class AssociativeExecutor {
         return v == null ? field.getName() + "Text" : v.toString();
     }
 
+    private static String getProviderName(Associative associative) {
+        if (StringUtils.isEmpty(associative.providerName())) {
+            return Void.class != associative.providerClass() ? associative.providerClass().getName():"";
+        }
+        return associative.providerName();
+    }
+
+    private static AssociativeProvider getProvider(Associative associative){
+        return Application.resolve(getProviderName(associative));
+    }
+
     private static void setAssociativeField(Associative associative, ExtensibleObject obj, EntityField field) {
 
 
@@ -71,14 +82,14 @@ public class AssociativeExecutor {
         if (obj.contains(newFieldName)) {
             return;
         }
-        AssociativeProvider provider = Application.resolve(associative.provider());
+        AssociativeProvider provider = getProvider(associative);
         if (provider == null) {
-            LOG.error(String.format("没有找到名为%s的AssociativeProvider对象", associative.provider()));
+            LOG.error(String.format("没有找到字段%s上的联想注解的AssociativeProvider", getProviderName(associative)));
             return;
         }
         try {
             Object v = field.getValue(obj, null);
-            AssociativeEntry entry = new AssociativeEntry(newFieldName, associative.provider(), associative.extras());
+            AssociativeEntry entry = new AssociativeEntry(newFieldName, getProviderName(associative), associative.extras());
 
             entry.execute(obj, v);
         } catch (Exception ex) {
@@ -101,12 +112,12 @@ public class AssociativeExecutor {
 
         for (Associative associative : associatives) {
 
-            AssociativeProvider provider = Application.resolve(associative.provider());
+            AssociativeProvider provider = getProvider(associative);
             if (provider == null) {
-                LOG.error(String.format("没有找到名为%s的AssociativeProvider对象", associative.provider()));
+                LOG.error(String.format("没有找到名为%s的AssociativeProvider对象", getProviderName(associative)));
                 return null;
             }
-            AssociativeEntry entry = new AssociativeEntry(null, associative.provider(), associative.extras());
+            AssociativeEntry entry = new AssociativeEntry(null, getProviderName(associative), associative.extras());
             return entry.getAssociateValue(v);
         }
         return v;

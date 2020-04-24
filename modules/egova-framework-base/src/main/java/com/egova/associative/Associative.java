@@ -16,7 +16,9 @@ public @interface Associative {
     String name();
 
 
-    String provider();
+    String providerName() default "";
+
+    Class<?> providerClass() default Void.class;
 
 
     String extras() default "";

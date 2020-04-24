@@ -188,7 +188,7 @@ public class ExceptionUtils {
     }
 
     public static IllegalArgumentException argument(String message, Throwable throwable) {
-        return new IllegalArgumentException(message,throwable);
+        return new IllegalArgumentException(message, throwable);
     }
 
     public static UnsupportedOperationException unsupported(Throwable throwable, String format, Object... args) {
@@ -201,6 +201,20 @@ public class ExceptionUtils {
     }
 
     public static UnsupportedOperationException unsupported(String message, Throwable throwable) {
-        return new UnsupportedOperationException(message,throwable);
+        return new UnsupportedOperationException(message, throwable);
+    }
+
+
+    public static ApiException api(Throwable throwable, String format, Object... args) {
+
+        return new ApiException(0L, String.format(format, args), throwable);
+    }
+
+    public static ApiException api(String format, Object... args) {
+        return new ApiException(0L, String.format(format, args));
+    }
+
+    public static ApiException api(String message, Throwable throwable) {
+        return new ApiException(0L, message, throwable);
     }
 }
