@@ -2,11 +2,13 @@ package com.egova.file;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 文件路径
  */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class FilePath {
     /**
