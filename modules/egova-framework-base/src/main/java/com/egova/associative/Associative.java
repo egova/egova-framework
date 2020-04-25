@@ -22,4 +22,6 @@ public @interface Associative {
 
 
     String extras() default "";
+
+    boolean require() default  true;
 }

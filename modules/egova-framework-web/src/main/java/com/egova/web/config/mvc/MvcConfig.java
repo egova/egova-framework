@@ -23,7 +23,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import java.util.List;
 
-
+//@Configuration
 @Slf4j
 @EnableConfigurationProperties(StaticResourceProperties.class)
 public class MvcConfig extends WebMvcConfigurationSupport {

@@ -1,6 +1,7 @@
 package com.egova.associative;
 
 
+import com.egova.exception.ExceptionUtils;
 import com.egova.utils.EntityAnnotationUtils;
 import com.flagwind.application.Application;
 import com.flagwind.commons.StringUtils;
@@ -15,6 +16,7 @@ import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -57,13 +59,22 @@ public class AssociativeExecutor {
 
     private static String getProviderName(Associative associative) {
         if (StringUtils.isEmpty(associative.providerName())) {
-            return Void.class != associative.providerClass() ? associative.providerClass().getName():"";
+            if (Void.class == associative.providerClass()) {
+                return "";
+            }
+            String name = associative.providerClass().getSimpleName();
+            return name.substring(0, 1).toLowerCase() + name.substring(1);
         }
         return associative.providerName();
     }
 
-    private static AssociativeProvider getProvider(Associative associative){
-        return Application.resolve(getProviderName(associative));
+    private static AssociativeProvider getProvider(Associative associative) {
+        String name = getProviderName(associative);
+        if (Application.contains(name)) {
+            return Application.resolve(getProviderName(associative));
+        } else {
+            return null;
+        }
     }
 
     private static void setAssociativeField(Associative associative, ExtensibleObject obj, EntityField field) {
@@ -84,44 +95,53 @@ public class AssociativeExecutor {
         }
         AssociativeProvider provider = getProvider(associative);
         if (provider == null) {
-            LOG.error(String.format("没有找到字段%s上的联想注解的AssociativeProvider", getProviderName(associative)));
+            String message = String.format("没有找到字段%s上的联想注解的AssociativeProvider", getProviderName(associative));
+            if (associative.require()) {
+                throw ExceptionUtils.framework(message);
+            }
+            LOG.warn(message);
             return;
         }
         try {
             Object v = field.getValue(obj, null);
-            AssociativeEntry entry = new AssociativeEntry(newFieldName, getProviderName(associative), associative.extras());
+            Object value;
 
-            entry.execute(obj, v);
-        } catch (Exception ex) {
-            LOG.error(String.format("%s对象json 联想序列化%s字段时异常", obj.getClass().getSimpleName(), field.getName()), ex);
-        }
-
-    }
-
-    public static Object getAssociativeValue(EntityField field, Object obj) {
-        Object v;
-        try {
-            v = field.getValue(obj, null);
-        } catch (Exception ex) {
-            LOG.error(String.format("%s对象json 联想序列化%s字段时异常", obj.getClass().getSimpleName(), field.getName()), ex);
-            return null;
-        }
-
-        Set<Associative> associatives = EntityAnnotationUtils.getMergedRepeatableAnnotations(field, Associative.class);
-
-
-        for (Associative associative : associatives) {
-
-            AssociativeProvider provider = getProvider(associative);
-            if (provider == null) {
-                LOG.error(String.format("没有找到名为%s的AssociativeProvider对象", getProviderName(associative)));
-                return null;
+            if (org.apache.commons.lang3.StringUtils.isEmpty(associative.extras())) {
+                value = provider.associate(v);
+            } else {
+                value = provider.associate(Arrays.asList(v, associative.extras()).toArray());
             }
-            AssociativeEntry entry = new AssociativeEntry(null, getProviderName(associative), associative.extras());
-            return entry.getAssociateValue(v);
+            obj.set(newFieldName, value);
+        } catch (Exception ex) {
+            LOG.error(String.format("%s对象json 联想序列化%s字段时异常", obj.getClass().getSimpleName(), field.getName()), ex);
         }
-        return v;
     }
+
+
+//    public static Object getAssociativeValue(EntityField field, Object obj) {
+//        Object v;
+//        try {
+//            v = field.getValue(obj, null);
+//        } catch (Exception ex) {
+//            LOG.error(String.format("%s对象json 联想序列化%s字段时异常", obj.getClass().getSimpleName(), field.getName()), ex);
+//            return null;
+//        }
+//
+//        Set<Associative> associatives = EntityAnnotationUtils.getMergedRepeatableAnnotations(field, Associative.class);
+//
+//
+//        for (Associative associative : associatives) {
+//
+//            AssociativeProvider provider = getProvider(associative);
+//            if (provider == null) {
+//                LOG.error(String.format("没有找到名为%s的AssociativeProvider对象", getProviderName(associative)));
+//                return null;
+//            }
+//            AssociativeEntry entry = new AssociativeEntry(null, getProviderName(associative), associative.extras());
+//            return entry.getAssociateValue(v);
+//        }
+//        return v;
+//    }
 
     public static void execute(ExtensibleObject obj) {
         List<EntityField> fields = EntityTypeHolder.getFields(obj.getClass());
@@ -133,8 +153,9 @@ public class AssociativeExecutor {
                     setAssociativeField(associative, obj, field);
                 }
             } catch (Exception ex) {
-                LOG.error(String.format("分析%s对象的%s联想属性出现异常", obj.getClass().getSimpleName(), field.getName()));
-                throw ex;
+                String message = String.format("分析%s对象的%s联想属性出现异常", obj.getClass().getSimpleName(), field.getName());
+                LOG.error(message);
+                throw ExceptionUtils.framework(message, ex);
             }
         }
     }

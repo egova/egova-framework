@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @description: 应用程序上下文
  * @author chendb
+ * @description: 应用程序上下文
  * @date 2020-04-17 14:17:06
  */
 public class Context implements ContentBase {
@@ -41,5 +41,14 @@ public class Context implements ContentBase {
         List<T> list = new ArrayList<>(map.values());
         AnnotationAwareOrderComparator.sort(list);
         return list;
+    }
+
+    public <T> Map<String, T> resolveMap(Class<T> serviceType) {
+        Map<String, T> map = context.getBeansOfType(serviceType);
+        return map;
+    }
+
+    public boolean contains(String name) {
+        return context.containsBean(name);
     }
 }
