@@ -20,7 +20,7 @@
 //    private String name;
 //    private String provider;
 //    private String extras;
-//    private boolean require;
+//    private boolean required;
 //
 //
 //

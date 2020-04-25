@@ -96,7 +96,7 @@ public class AssociativeExecutor {
         AssociativeProvider provider = getProvider(associative);
         if (provider == null) {
             String message = String.format("没有找到字段%s上的联想注解的AssociativeProvider", getProviderName(associative));
-            if (associative.require()) {
+            if (associative.required()) {
                 throw ExceptionUtils.framework(message);
             }
             LOG.warn(message);

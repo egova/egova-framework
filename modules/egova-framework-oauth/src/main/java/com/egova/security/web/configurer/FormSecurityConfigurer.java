@@ -24,7 +24,7 @@ public class FormSecurityConfigurer implements HttpSecurityConfigurer
 	{
 
 		http.formLogin()
-				.loginPage("/authentication/require")
+				.loginPage("/authentication/required")
 				.loginProcessingUrl("/authentication/form")
 				.successHandler(defaultAuthenticationSuccessHandler)
 				.failureHandler(defaultAuthenticationFailureHandler);
