@@ -1,8 +1,8 @@
 package com.egova.web.rest;
 
 import com.egova.exception.ApiException;
-import com.egova.rest.ResponseResult;
-import com.egova.rest.ResponseResults;
+import com.egova.web.rest.ResponseResult;
+import com.egova.web.rest.ResponseResults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.bind.annotation.ExceptionHandler;

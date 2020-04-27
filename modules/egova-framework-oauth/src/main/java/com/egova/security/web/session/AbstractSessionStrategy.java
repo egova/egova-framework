@@ -2,7 +2,7 @@ package com.egova.security.web.session;
 
 
 import com.egova.json.JsonMapping;
-import com.egova.rest.ResponseResults;
+import com.egova.web.rest.ResponseResults;
 import com.egova.security.core.properties.BrowserProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

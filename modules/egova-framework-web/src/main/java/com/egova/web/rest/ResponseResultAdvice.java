@@ -1,7 +1,7 @@
 package com.egova.web.rest;
 
-import com.egova.rest.ResponseResult;
-import com.egova.rest.ResponseResults;
+import com.egova.web.rest.ResponseResult;
+import com.egova.web.rest.ResponseResults;
 import com.egova.web.annotation.Api;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;

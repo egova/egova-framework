@@ -1,7 +1,7 @@
 package com.egova.security.web.logout;
 
 import com.egova.json.JsonMapping;
-import com.egova.rest.ResponseResults;
+import com.egova.web.rest.ResponseResults;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

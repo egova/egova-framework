@@ -1,4 +1,4 @@
-package com.egova.rest;
+package com.egova.web.rest;
 
 /**
  * 响应结果接口定义，考虑到各部分有各自的结果包装类，所以只定义了接口，各部分需要在各自结果包装类上实现这一接口

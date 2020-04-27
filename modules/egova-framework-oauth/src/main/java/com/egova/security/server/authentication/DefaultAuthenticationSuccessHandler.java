@@ -2,7 +2,7 @@ package com.egova.security.server.authentication;
 
 
 import com.egova.json.JsonMapping;
-import com.egova.rest.ResponseResults;
+import com.egova.web.rest.ResponseResults;
 import com.egova.security.core.LoginResponseType;
 import com.egova.security.core.properties.BrowserProperties;
 import org.apache.commons.lang3.StringUtils;

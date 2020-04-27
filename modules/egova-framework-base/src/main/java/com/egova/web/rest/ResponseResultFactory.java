@@ -1,4 +1,4 @@
-package com.egova.rest;
+package com.egova.web.rest;
 
 
 /**

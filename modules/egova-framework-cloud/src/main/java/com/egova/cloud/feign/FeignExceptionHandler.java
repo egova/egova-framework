@@ -1,7 +1,7 @@
 package com.egova.cloud.feign;
 
-import com.egova.rest.ResponseResult;
-import com.egova.rest.ResponseResults;
+import com.egova.web.rest.ResponseResult;
+import com.egova.web.rest.ResponseResults;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,6 +1,7 @@
 package com.egova.cloud.feign;
 
 import com.egova.json.JsonMapping;
+import feign.Contract;
 import feign.Feign;
 import feign.RequestInterceptor;
 import feign.codec.Decoder;
@@ -12,12 +13,15 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.openfeign.AnnotatedParameterProcessor;
 import org.springframework.cloud.openfeign.FeignClientProperties;
 import org.springframework.cloud.openfeign.support.FeignHttpClientProperties;
 import org.springframework.cloud.openfeign.support.ResponseEntityDecoder;
 import org.springframework.cloud.openfeign.support.SpringDecoder;
+import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.ConversionService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +41,25 @@ public class FeignAutoConfiguration {
     @Autowired(required = false)
     private List<FeignClientSpecification> configurations = new ArrayList<>();
 
+
+    @Autowired(
+            required = false
+    )
+    private List<AnnotatedParameterProcessor> parameterProcessors = new ArrayList();
+
+
     @Autowired
     private ObjectFactory<HttpMessageConverters> messageConverters;
 
+
+
     @Autowired
     private JsonMapping jsonMapping;
+
+    @Bean
+    public Contract feignContract(ConversionService feignConversionService) {
+        return new DefaultSpringMvcContract(this.parameterProcessors, feignConversionService);
+    }
 
     @Bean
     public FeignContext defaultFeignContext() {

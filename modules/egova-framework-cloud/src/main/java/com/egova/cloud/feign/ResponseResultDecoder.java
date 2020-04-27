@@ -3,7 +3,7 @@ package com.egova.cloud.feign;
 
 import com.egova.exception.FrameworkException;
 import com.egova.json.JsonMapping;
-import com.egova.rest.ResponseResult;
+import com.egova.web.rest.ResponseResult;
 import feign.FeignException;
 import feign.Response;
 import feign.codec.Decoder;
