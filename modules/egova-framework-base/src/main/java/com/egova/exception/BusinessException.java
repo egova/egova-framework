@@ -1,7 +1,6 @@
 package com.egova.exception;
 
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
@@ -9,7 +8,6 @@ import lombok.EqualsAndHashCode;
  * @author chendb
  * @date 2016年12月8日 下午11:23:51
  */
-@Data
 @EqualsAndHashCode(callSuper = true)
 public class BusinessException extends RuntimeException {
 
