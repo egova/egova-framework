@@ -11,5 +11,5 @@ import java.lang.annotation.*;
 public @interface RequestDecorating
 {
 	String[] state();
-	String[] version() default {};
+//	String[] version() default {};
 }

@@ -12,12 +12,9 @@ public class DecoratingRequestCondition implements RequestCondition<DecoratingRe
 
     private String[] states;
 
-    private String[] versions;
 
-
-    public DecoratingRequestCondition(String[] states, String[] versions) {
+    public DecoratingRequestCondition(String[] states) {
         this.states = Arrays.stream(states).map(g -> Strman.toKebabCase(g)).toArray(String[]::new);
-        this.versions = versions;
     }
 
     // 这里combine()方法主要是供给复合类型的RequestMapping使用的，这种类型的Mapping可以持有
@@ -25,8 +22,8 @@ public class DecoratingRequestCondition implements RequestCondition<DecoratingRe
     // 中的各个条件进行合并，这里就是对RequestCondition条件进行合并
     public DecoratingRequestCondition combine(DecoratingRequestCondition other) {
         String[] allStates = merge(states, other.states);
-        String[] allVersions = merge(versions, other.versions);
-        return new DecoratingRequestCondition(allStates, allVersions);
+//        String[] allVersions = merge(versions, other.versions);
+        return new DecoratingRequestCondition(allStates);
     }
 
     // 判断当前请求对应用户选择的模板与当前接口所能处理的模板是否一致，
@@ -34,16 +31,13 @@ public class DecoratingRequestCondition implements RequestCondition<DecoratingRe
     // 如果当前条件的匹配结果不为空，则说明当前条件是能够匹配上的，如果返回值为空，则说明其不能匹配
     public DecoratingRequestCondition getMatchingCondition(HttpServletRequest request) {
         String s = Strman.toKebabCase(request.getParameter("@state"));
-        String v = request.getParameter("@version");
-        if (StringUtils.isEmpty(s) && StringUtils.isEmpty(v)) {
+        if (StringUtils.isEmpty(s)) {
             return null;
         }
         if (StringUtils.isNoneEmpty(s) && Arrays.stream(states).noneMatch(g -> g.equalsIgnoreCase(s))) {
             return null;
         }
-        if (StringUtils.isNoneEmpty(v) && Arrays.stream(versions).noneMatch(g -> g.equalsIgnoreCase(v))) {
-            return null;
-        }
+
 
         return this;
     }
