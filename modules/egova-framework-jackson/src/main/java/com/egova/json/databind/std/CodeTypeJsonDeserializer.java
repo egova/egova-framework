@@ -34,7 +34,7 @@ public class CodeTypeJsonDeserializer<E extends CodeType> extends JsonDeserializ
         try {
             String value = JsonTokenUtils.getParseValue(parser,"value");
             if (StringUtils.isEmpty(value)) {
-                return e;
+                return null;
             }
             Constructor ctr = clzss.getConstructor(String.class);
             if(ctr!=null){

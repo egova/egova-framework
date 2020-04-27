@@ -23,7 +23,7 @@ public class CacheKeyGenerator implements KeyGenerator {
 			} else if (invocationHandler.getClass().toString().contains("JdkDynamicAopProxy")) {
 				ProxyFactory advised = (ProxyFactory) ReflectExtraUtils.getFieldValue(invocationHandler, "advised");
 				Class<?>[] objectList = advised.getProxiedInterfaces();
-				if (objectList != null && objectList.length > 0) {
+				if (objectList.length > 0) {
 					clazz = objectList[0];
 					return clazz;
 				}

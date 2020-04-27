@@ -36,6 +36,7 @@ public class ReflectExtraUtils {
                 m = clazz.getMethod("is" + convertFirstUpper(field.getName()));
             }
             // 调用getter方法获取属性值
+            assert m != null;
             return m.invoke(object);
         } catch (NoSuchMethodException e) {
             throw new FrameworkException("没有找到字段的get方法", e);

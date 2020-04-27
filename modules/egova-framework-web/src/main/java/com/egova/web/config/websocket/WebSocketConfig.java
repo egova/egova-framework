@@ -91,7 +91,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         destinationPrefixes.add("/queue");
         destinationPrefixes.add("/user");
         // 推送到前端的前缀
-        registry.enableSimpleBroker(destinationPrefixes.toArray(new String[destinationPrefixes.size()]));
+        registry.enableSimpleBroker(destinationPrefixes.toArray(new String[0]));
         //        registry.enableSimpleBroker("/face");
         // 客户端向后台发送时需要指定的前缀,客户端发送请求以/app开始
         registry.setApplicationDestinationPrefixes("/app");
