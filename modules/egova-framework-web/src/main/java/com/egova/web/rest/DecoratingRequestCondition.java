@@ -1,6 +1,7 @@
 package com.egova.web.rest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.servlet.mvc.condition.RequestCondition;
 import strman.Strman;
 
@@ -13,13 +14,15 @@ public class DecoratingRequestCondition implements RequestCondition<DecoratingRe
     private String[] states;
 
 
+
     public DecoratingRequestCondition(String[] states) {
-        this.states = Arrays.stream(states).map(g -> Strman.toKebabCase(g)).toArray(String[]::new);
+        this.states = Arrays.stream(states).map(Strman::toKebabCase).toArray(String[]::new);
     }
 
     // 这里combine()方法主要是供给复合类型的RequestMapping使用的，这种类型的Mapping可以持有
     // 两个Mapping信息，因而需要对两个Mapping进行合并，这个合并的过程其实就是对每个RequestMappingInfo
     // 中的各个条件进行合并，这里就是对RequestCondition条件进行合并
+    @NotNull
     public DecoratingRequestCondition combine(DecoratingRequestCondition other) {
         String[] allStates = merge(states, other.states);
 //        String[] allVersions = merge(versions, other.versions);
@@ -31,7 +34,8 @@ public class DecoratingRequestCondition implements RequestCondition<DecoratingRe
     // 如果当前条件的匹配结果不为空，则说明当前条件是能够匹配上的，如果返回值为空，则说明其不能匹配
     public DecoratingRequestCondition getMatchingCondition(HttpServletRequest request) {
         String s = Strman.toKebabCase(request.getParameter("@state"));
-        if (StringUtils.isEmpty(s)) {
+        String v = request.getParameter("@version");
+        if (StringUtils.isEmpty(s) && StringUtils.isEmpty(v)) {
             return null;
         }
         if (StringUtils.isNoneEmpty(s) && Arrays.stream(states).noneMatch(g -> g.equalsIgnoreCase(s))) {
@@ -45,7 +49,7 @@ public class DecoratingRequestCondition implements RequestCondition<DecoratingRe
 
     // 对两个RequestCondition对象进行比较，这里主要是如果存在两个注册的一样的Mapping，那么就会对
     // 这两个Mapping进行排序，以判断哪个Mapping更适合处理当前request请求
-    public int compareTo(DecoratingRequestCondition other, HttpServletRequest request) {
+    public int compareTo(@NotNull DecoratingRequestCondition other, @NotNull HttpServletRequest request) {
         return null != states && null == other.states ? 1
                 : null == states && null != other.states ? -1 : 0;
     }
@@ -55,7 +59,7 @@ public class DecoratingRequestCondition implements RequestCondition<DecoratingRe
         if (null == otherTemplates) {
             return sources;
         }
-        otherTemplates = Arrays.stream(otherTemplates).map(s -> Strman.toKebabCase(s)).toArray(String[]::new);
+        otherTemplates = Arrays.stream(otherTemplates).map(Strman::toKebabCase).toArray(String[]::new);
         String[] results = new String[sources.length + otherTemplates.length];
         System.arraycopy(sources, 0, results, 0, sources.length);
         System.arraycopy(otherTemplates, 0, results, sources.length, results.length - sources.length);

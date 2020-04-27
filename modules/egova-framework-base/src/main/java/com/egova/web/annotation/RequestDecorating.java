@@ -10,6 +10,6 @@ import java.lang.annotation.*;
 @Mapping
 public @interface RequestDecorating
 {
-	String[] state();
+	String state();
 //	String[] version() default {};
 }
