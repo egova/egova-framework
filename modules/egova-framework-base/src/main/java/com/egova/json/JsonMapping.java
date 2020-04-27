@@ -1,6 +1,7 @@
 package com.egova.json;
 
 import java.io.Reader;
+import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -20,6 +21,8 @@ public interface JsonMapping {
      */
     <T> T deserialize(String json, Class<T> clazz);
 
+    <T> T deserialize(String json, Type type);
+
     /**
      * 反序列化对象
      *
@@ -29,6 +32,8 @@ public interface JsonMapping {
      * @return 类型
      */
     <T> T deserialize(Reader reader, Class<T> clazz);
+
+    <T> T deserialize(Reader reader, Type type);
 
     /**
      * 反序列化成list
@@ -40,6 +45,8 @@ public interface JsonMapping {
      */
     <T> List<T> deserializeList(String json, Class<T> clazz);
 
+    <T> List<T> deserializeList(String json, Type type);
+
     /**
      * 反序列化成list
      *
@@ -50,6 +57,9 @@ public interface JsonMapping {
      */
     <T> List<T> deserializeList(Reader reader, Class<T> clazz);
 
+    <T> List<T> deserializeList(Reader reader, Type type);
+
+
     /**
      * 序列化成JSON字符串
      *
@@ -57,5 +67,8 @@ public interface JsonMapping {
      * @return JSON字符串
      */
     String serialize(Object value);
+
+
+    String serialize(Object value,boolean enableAssociative);
 
 }

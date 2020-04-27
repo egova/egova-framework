@@ -24,29 +24,29 @@ import java.util.Collection;
  */
 public class JsonUtils {
 
-	private static ObjectMappingCustomer ASSOCIATIVE_OBJECT_MAPPER;
+	private static ObjectMappingCustomer ENABLE_ASSOCIATIVE_OBJECT_MAPPING;
 
-	private static ObjectMappingCustomer CUSTOM_OBJECT_MAPPER;
+	private static ObjectMappingCustomer DISABLE_ASSOCIATIVE_OBJECT_MAPPING;
 
-	private static ObjectMappingCustomer getAssociativeMapping() {
+	private static ObjectMappingCustomer enableAssociativeObjectMapping() {
 		try {
-			return Application.resolve(ObjectMappingCustomer.class);
+			return Application.resolve(ObjectMappingCustomer.class,"ENABLE_ASSOCIATIVE_OBJECT_MAPPING");
 		} catch (Exception ex) {
-			if (ASSOCIATIVE_OBJECT_MAPPER == null) {
-				ASSOCIATIVE_OBJECT_MAPPER = new ObjectMappingCustomer(true);
+			if (ENABLE_ASSOCIATIVE_OBJECT_MAPPING == null) {
+				ENABLE_ASSOCIATIVE_OBJECT_MAPPING = new ObjectMappingCustomer(true);
 			}
-			return ASSOCIATIVE_OBJECT_MAPPER;
+			return ENABLE_ASSOCIATIVE_OBJECT_MAPPING;
 		}
 	}
 
-	private static ObjectMappingCustomer getCustomMapping() {
+	private static ObjectMappingCustomer disableAssociativeObjectMapping() {
 		try {
-			return Application.resolve("customObjectMapper");
+			return Application.resolve(ObjectMappingCustomer.class,"DISABLE_ASSOCIATIVE_OBJECT_MAPPING");
 		} catch (Exception ex) {
-			if (CUSTOM_OBJECT_MAPPER == null) {
-				CUSTOM_OBJECT_MAPPER = new ObjectMappingCustomer(false);
+			if (DISABLE_ASSOCIATIVE_OBJECT_MAPPING == null) {
+				DISABLE_ASSOCIATIVE_OBJECT_MAPPING = new ObjectMappingCustomer(false);
 			}
-			return CUSTOM_OBJECT_MAPPER;
+			return DISABLE_ASSOCIATIVE_OBJECT_MAPPING;
 		}
 	}
 
@@ -60,7 +60,7 @@ public class JsonUtils {
 	 */
 	public static <T> T deserializeByType(String json, TypeReference type) {
 		try {
-			T d = getAssociativeMapping().readValue(json, type);
+			T d = enableAssociativeObjectMapping().readValue(json, type);
 			return d;
 		} catch (Exception e) {
 			throw new FrameworkException(type + "类型对象解析出错", e);
@@ -77,7 +77,7 @@ public class JsonUtils {
 	 */
 	public static <T> T deserialize(String json, Class<?> clazz) {
 		try {
-			T d = (T) getAssociativeMapping().readValue(json, clazz);
+			T d = (T) enableAssociativeObjectMapping().readValue(json, clazz);
 			return d;
 		} catch (IOException e) {
 			throw new FrameworkException(clazz + "类型对象解析出错", e);
@@ -94,7 +94,7 @@ public class JsonUtils {
 	 */
 	public static JsonNode readTree(String json) {
 		try {
-			return getAssociativeMapping().readTree(json);
+			return enableAssociativeObjectMapping().readTree(json);
 		} catch (Exception ex) {
 			throw new FrameworkException("解析json为JsonNode对象异常", ex);
 		}
@@ -113,8 +113,8 @@ public class JsonUtils {
 			if (StringUtils.isBlank(json)) {
 				return new ArrayList<>();
 			}
-			JavaType type = constructCollectionType(getAssociativeMapping(), ArrayList.class, clazz);
-			return getAssociativeMapping().readValue(json, type);
+			JavaType type = constructCollectionType(enableAssociativeObjectMapping(), ArrayList.class, clazz);
+			return enableAssociativeObjectMapping().readValue(json, type);
 		} catch (IOException e) {
 			throw new FrameworkException(clazz + "类型对象集合反序列化出错");
 		}
@@ -131,7 +131,7 @@ public class JsonUtils {
 			if (value == null) {
 				return null;
 			}
-			return getAssociativeMapping().writeValueAsString(value);
+			return enableAssociativeObjectMapping().writeValueAsString(value);
 		} catch (JsonProcessingException e) {
 			throw new FrameworkException(value.getClass() + "类型对象解析出错");
 		}
@@ -149,7 +149,7 @@ public class JsonUtils {
 			if (value == null) {
 				return null;
 			}
-			return getCustomMapping().writeValueAsString(value);
+			return disableAssociativeObjectMapping().writeValueAsString(value);
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(value.getClass() + "类型对象解析出错", e);
 		}
@@ -166,7 +166,7 @@ public class JsonUtils {
 	 */
 	public static <T> T readValue(String json, Class<?> clazz) {
 		try {
-			T d = (T) getCustomMapping().readValue(json, clazz);
+			T d = (T) disableAssociativeObjectMapping().readValue(json, clazz);
 			return d;
 		} catch (IOException e) {
 			throw new RuntimeException(clazz + "类型对象解析出错", e);

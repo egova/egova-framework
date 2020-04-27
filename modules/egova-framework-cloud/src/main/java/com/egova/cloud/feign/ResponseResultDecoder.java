@@ -39,12 +39,13 @@ public class ResponseResultDecoder implements Decoder {
         // 接收类型不是OperateResult，则拆包
         if (!isResponseResult(type) && isJsonResponse(response)) {
             LOG.debug("返回类型不是OperateResult，拆包类型: {}", type.getClass().getName());
-            ResponseResult result = jsonMapping.deserialize(response.body().asReader(StandardCharsets.UTF_8), ResponseResult.class);
+
+            ResponseResult result = jsonMapping.deserialize(response.body().asReader(StandardCharsets.UTF_8), type);
             if (result.getHasError()) {
                 LOG.debug("返回结果存在错误: {}", result.getMessage());
                 throw new FrameworkException(result.getMessage());
             }
-            String json = jsonMapping.serialize(result.getResult());
+            String json = jsonMapping.serialize(result.getResult(),false);
             response = response.toBuilder().body(json, StandardCharsets.UTF_8).build();
         }
         return decoder.decode(response, type);
