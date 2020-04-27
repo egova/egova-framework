@@ -34,8 +34,7 @@ public class DecoratingRequestCondition implements RequestCondition<DecoratingRe
     // 如果当前条件的匹配结果不为空，则说明当前条件是能够匹配上的，如果返回值为空，则说明其不能匹配
     public DecoratingRequestCondition getMatchingCondition(HttpServletRequest request) {
         String s = Strman.toKebabCase(request.getParameter("@state"));
-        String v = request.getParameter("@version");
-        if (StringUtils.isEmpty(s) && StringUtils.isEmpty(v)) {
+        if (StringUtils.isEmpty(s)) {
             return null;
         }
         if (StringUtils.isNoneEmpty(s) && Arrays.stream(states).noneMatch(g -> g.equalsIgnoreCase(s))) {
