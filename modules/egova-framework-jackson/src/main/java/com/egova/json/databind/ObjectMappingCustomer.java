@@ -4,6 +4,7 @@ import com.egova.json.databind.std.*;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.deser.BeanDeserializerBase;
 import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
@@ -13,7 +14,7 @@ import com.flagwind.lang.ExtensibleObject;
 
 /**
  * ObjectMapping 扩展 此类对于非标准json解析做了扩展处理
- * 
+ *
  * @author chendb
  * @date 2016年12月8日 下午11:30:19
  */
@@ -27,6 +28,7 @@ public class ObjectMappingCustomer extends ObjectMapper {
 
     /**
      * 构造函数
+     *
      * @param enableAssociative 是否启用联想注解
      */
     public ObjectMappingCustomer(boolean enableAssociative) {
@@ -86,6 +88,8 @@ public class ObjectMappingCustomer extends ObjectMapper {
                     return new CustomTimestampDeseralizer();
                 } else if (CodeType.class.isAssignableFrom(beanDesc.getBeanClass())) {
                     return new CodeTypeJsonDeserializer(beanDesc.getBeanClass());
+                } else if (ExtensibleObject.class.isAssignableFrom(beanDesc.getBeanClass())) {
+                    return new ExtensibleObjectDeserializer((BeanDeserializerBase) deserializer);
                 } else {
                     return deserializer;
                 }

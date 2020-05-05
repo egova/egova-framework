@@ -45,6 +45,15 @@ public class ResponseResults {
         return getFactory().success(t, message);
     }
 
+
+    public static <T> ResponseResult<T> unwrap(WrappedData t, String message) {
+        return getFactory().unwrap(t, message);
+    }
+
+    public static <T> ResponseResult<T> unwrap(WrappedData t) {
+        return getFactory().unwrap(t, null);
+    }
+
     /**
      * 包装成功的响应结果
      *

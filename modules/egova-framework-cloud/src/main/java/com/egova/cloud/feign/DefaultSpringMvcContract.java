@@ -28,7 +28,7 @@ public class DefaultSpringMvcContract extends SpringMvcContract {
         if (methodAnnotation instanceof RequestDecorating || methodAnnotation.annotationType().isAnnotationPresent(RequestDecorating.class)) {
             RequestDecorating methodMapping = AnnotatedElementUtils.findMergedAnnotation(method, RequestDecorating.class);
             assert methodMapping != null;
-            data.template().query("@state",methodMapping.state());
+            data.template().query("@state",methodMapping.value());
         }
     }
 }

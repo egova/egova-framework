@@ -1,7 +1,5 @@
 package com.egova.web.rest;
 
-import com.egova.web.rest.ResponseResult;
-import com.egova.web.rest.ResponseResults;
 import com.egova.web.annotation.Api;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -37,6 +35,11 @@ public class ResponseResultAdvice implements ResponseBodyAdvice<Object> {
         if (body instanceof ResponseEntity || body instanceof ResponseResult) {
             return body;
         }
+
+        if (body instanceof WrappedData) {
+            return ResponseResults.unwrap((WrappedData) body);
+        }
+
         // 其余统一包装成OperateResult
         return ResponseResults.success(body);
     }

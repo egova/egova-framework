@@ -7,29 +7,39 @@ import java.util.Collection;
 /**
  * 默认的用户详情
  */
-public class DefaultUserDetails extends org.springframework.security.core.userdetails.User
-{
-	private String id;
 
-	public String getId()
-	{
-		return id;
-	}
+public class DefaultUserDetails extends org.springframework.security.core.userdetails.User {
 
-	public void setId(String id)
-	{
-		this.id = id;
-	}
 
-	public DefaultUserDetails(String userId, String username, String password, Collection<? extends GrantedAuthority> authorities)
-	{
-		super(username, password, authorities);
-		this.id = userId;
-	}
+    private String tenantId;
 
-	public DefaultUserDetails(String userId, String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities)
-	{
-		super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
-		this.id = userId;
-	}
+    private String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public DefaultUserDetails(String tenantId, String userId, String username, String password, Collection<? extends GrantedAuthority> authorities) {
+        super(username, password, authorities);
+        this.id = userId;
+        this.tenantId = tenantId;
+    }
+
+    public DefaultUserDetails(String tenantId, String userId, String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+        super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
+        this.id = userId;
+        this.tenantId = tenantId;
+    }
 }

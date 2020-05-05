@@ -1,6 +1,5 @@
 package com.egova.web.annotation;
 
-import org.springframework.core.annotation.AliasFor;
 import org.springframework.web.bind.annotation.Mapping;
 
 import java.lang.annotation.*;
@@ -11,10 +10,12 @@ import java.lang.annotation.*;
 @Mapping
 public @interface RequestDecorating
 {
-	@AliasFor("state")
+//	@AliasFor("state")
 	String value();
 
-	@AliasFor("value")
-	String state() default "";
+//	@AliasFor("value")
+//	String state() default "";
+
+	String name() default "state";
 
 }

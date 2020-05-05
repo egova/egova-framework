@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class JsonTokenUtils {
 
-    public static String getParseValue(JsonParser parser,String name) throws IOException {
+    public static String getParseValue(JsonParser parser, String name) throws IOException {
         String value = null;
         JsonToken jsonToken = parser.currentToken();
         if (JsonToken.START_OBJECT.equals(jsonToken)) {
@@ -31,16 +31,24 @@ public class JsonTokenUtils {
                 }
                 jsonToken = parser.nextToken();
             }
-        } else {
-            if (JsonToken.VALUE_NUMBER_INT.equals(jsonToken)
-                    || JsonToken.VALUE_NUMBER_FLOAT.equals(jsonToken)
-                    || JsonToken.VALUE_TRUE.equals(jsonToken)
-                    || JsonToken.VALUE_FALSE.equals(jsonToken)
-                    || JsonToken.VALUE_STRING.equals(jsonToken)
+        } else if (JsonToken.VALUE_NUMBER_INT.equals(jsonToken)
+                || JsonToken.VALUE_NUMBER_FLOAT.equals(jsonToken)
+                || JsonToken.VALUE_TRUE.equals(jsonToken)
+                || JsonToken.VALUE_FALSE.equals(jsonToken)
+                || JsonToken.VALUE_STRING.equals(jsonToken)
 
-            ) {
-                value = parser.getText();
+        ) {
+            value = parser.getText();
+        } else if (JsonToken.START_ARRAY.equals(jsonToken)) {
+            value = "";
+            while ((!parser.isClosed()) && (!JsonToken.END_ARRAY.equals(jsonToken))) {
+                if (!value.equalsIgnoreCase("[") && value.length() > 1) {
+                    value += ",";
+                }
+                value += "\""+parser.getText()+"\"";
+                jsonToken = parser.nextToken();
             }
+            value += "]";
         }
         return value;
     }

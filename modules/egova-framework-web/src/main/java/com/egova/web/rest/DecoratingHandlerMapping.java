@@ -55,7 +55,7 @@ public class DecoratingHandlerMapping extends RequestMappingHandlerMapping {
     }
 
     private RequestCondition<DecoratingRequestCondition> createCondition(RequestDecorating decorating) {
-        return decorating == null ? null : new DecoratingRequestCondition(new String[]{decorating.state()});
+        return decorating == null ? null : new DecoratingRequestCondition(decorating.name(), new String[]{decorating.value()});
     }
 
 }

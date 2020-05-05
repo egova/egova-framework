@@ -26,5 +26,8 @@ public interface ResponseResultFactory {
     <T> ResponseResult<T> error(String message);
 
 
+    <T> ResponseResult<T> unwrap(WrappedData t, String message);
+
+
 
 }
