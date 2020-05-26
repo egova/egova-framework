@@ -3,6 +3,7 @@ package com.egova.utils;
 import com.flagwind.reflect.entities.EntityField;
 import com.flagwind.reflect.entities.EntityType;
 import org.springframework.core.annotation.AnnotatedElementUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.Set;
@@ -87,13 +88,13 @@ public class EntityAnnotationUtils {
         if (field.getField() != null) {
             result = AnnotatedElementUtils.getMergedRepeatableAnnotations(field.getField(), annotationType);
         }
-        if (result == null && field.getGetter() != null) {
+        if (CollectionUtils.isEmpty(result) && field.getGetter() != null) {
             result = AnnotatedElementUtils.getMergedRepeatableAnnotations(field.getGetter(), annotationType);
         }
-        if (result == null && field.getSetter() != null) {
+        if (CollectionUtils.isEmpty(result) && field.getSetter() != null) {
             result = AnnotatedElementUtils.getMergedRepeatableAnnotations(field.getSetter(), annotationType);
         }
-        if (result == null && field.getJavaType() != null) {
+        if (CollectionUtils.isEmpty(result) && field.getJavaType() != null) {
             result = AnnotatedElementUtils.getMergedRepeatableAnnotations(field.getJavaType(), annotationType);
         }
         return result;

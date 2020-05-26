@@ -186,12 +186,12 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
             clients.inMemory()
                     .withClient("unity-client")
                     .secret(passwordEncoder.encode("unity"))
-                    .authorizedGrantTypes("password", "authorization_code", "refresh_token", "client_credentials", "social", "pki")
+                    .authorizedGrantTypes("password", "authorization_code", "refresh_token", "client_credentials", "social", "pki","sms")
                     .authorities("ROLE_CLIENT")
                     .scopes("read", "write")
                     .and().withClient("mobile-client")
                     .secret(passwordEncoder.encode("mobile"))
-                    .authorizedGrantTypes("password", "authorization_code", "refresh_token", "client_credentials", "social", "pki")
+                    .authorizedGrantTypes("password", "authorization_code", "refresh_token", "client_credentials", "social", "pki","sms")
                     .authorities("ROLE_CLIENT")
                     .scopes("read", "write");
         }
