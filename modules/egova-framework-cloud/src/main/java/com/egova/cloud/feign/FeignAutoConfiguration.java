@@ -1,10 +1,12 @@
 package com.egova.cloud.feign;
 
 import com.egova.json.JsonMapping;
+import com.egova.json.databind.ObjectMappingCustomer;
 import feign.Contract;
 import feign.Feign;
 import feign.RequestInterceptor;
 import feign.codec.Decoder;
+import feign.codec.Encoder;
 import feign.optionals.OptionalDecoder;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +20,12 @@ import org.springframework.cloud.openfeign.FeignClientProperties;
 import org.springframework.cloud.openfeign.support.FeignHttpClientProperties;
 import org.springframework.cloud.openfeign.support.ResponseEntityDecoder;
 import org.springframework.cloud.openfeign.support.SpringDecoder;
+import org.springframework.cloud.openfeign.support.SpringEncoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,13 +103,38 @@ public class FeignAutoConfiguration {
     }
 
     /**
-     * 解码，默认基础上加入非OperateResult接收类型自动拆包
+     * 解码，默认基础上加入非ResponseResult接收类型自动拆包
      *
      * @return feignDecoder
      */
     @Bean
     public Decoder feignDecoder() {
-        return new OptionalDecoder(new ResponseEntityDecoder(new ResponseResultDecoder(new SpringDecoder(this.messageConverters), jsonMapping)));
+        return new OptionalDecoder(new ResponseEntityDecoder(new ResponseResultDecoder(new SpringDecoder(feignHttpMessageConverter()), jsonMapping)));
+    }
+
+    /**
+     * 编码，防止序列化时联想
+     *
+     * @return feignEncoder
+     */
+    @Bean
+    public Encoder feignEncoder() {
+        return new SpringEncoder(feignHttpMessageConverter());
+    }
+
+    @Autowired
+    private ObjectMappingCustomer disableAssociativeObjectMapping;
+
+    private ObjectFactory<HttpMessageConverters> feignHttpMessageConverter() {
+        List<HttpMessageConverter<?>> converters = new ArrayList<>(messageConverters.getObject().getConverters());
+        for (int i = 0; i < converters.size(); i++) {
+            HttpMessageConverter converter = converters.get(i);
+            // 下面防止feign在编码时，进行联想
+            if (converter instanceof MappingJackson2HttpMessageConverter) {
+                converters.set(i, new MappingJackson2HttpMessageConverter(disableAssociativeObjectMapping));
+            }
+        }
+        return () -> new HttpMessageConverters(converters);
     }
 
 }

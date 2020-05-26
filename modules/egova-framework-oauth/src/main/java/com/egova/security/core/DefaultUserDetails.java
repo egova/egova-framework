@@ -35,4 +35,9 @@ public class DefaultUserDetails extends org.springframework.security.core.userde
 		this.id = userId;
 		this.tenantId = tenantId;
 	}
+
+	public String getTenantId() {
+		return tenantId;
+	}
+
 }
