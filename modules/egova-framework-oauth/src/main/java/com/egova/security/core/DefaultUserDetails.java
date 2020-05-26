@@ -9,6 +9,7 @@ import java.util.Collection;
  */
 public class DefaultUserDetails extends org.springframework.security.core.userdetails.User
 {
+	private String tenantId;
 	private String id;
 
 	public String getId()
@@ -21,15 +22,17 @@ public class DefaultUserDetails extends org.springframework.security.core.userde
 		this.id = id;
 	}
 
-	public DefaultUserDetails(String userId, String username, String password, Collection<? extends GrantedAuthority> authorities)
+	public DefaultUserDetails(String tenantId, String userId, String username, String password, Collection<? extends GrantedAuthority> authorities)
 	{
 		super(username, password, authorities);
 		this.id = userId;
+		this.tenantId = tenantId;
 	}
 
-	public DefaultUserDetails(String userId, String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities)
+	public DefaultUserDetails(String tenantId, String userId, String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities)
 	{
 		super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
 		this.id = userId;
+		this.tenantId = tenantId;
 	}
 }
