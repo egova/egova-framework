@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.flagwind.lang.CodeType;
 import com.flagwind.lang.ExtensibleObject;
 
@@ -99,5 +101,9 @@ public class ObjectMappingCustomer extends ObjectMapper {
 
         this.registerModule(module);
 
+        // 解决 jackson2 无法反序列化 LocalDateTime 的问题
+        this.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        this.registerModule(new JavaTimeModule());
+        this.registerModule(new Jdk8Module());
     }
 }
