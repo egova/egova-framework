@@ -1,7 +1,6 @@
 package com.egova.cloud.web;
 
 import org.apache.http.client.HttpClient;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
@@ -34,7 +33,6 @@ public class RestTemplateAutoConfiguration {
 
     @Bean
     @LoadBalanced
-    @ConditionalOnMissingBean
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
         // 设置UTF-8

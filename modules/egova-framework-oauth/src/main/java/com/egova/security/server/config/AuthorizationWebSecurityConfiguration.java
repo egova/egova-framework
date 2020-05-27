@@ -31,7 +31,10 @@ public class AuthorizationWebSecurityConfiguration extends BrowserSecurityConfig
 
     private final BeanFactory beanFactory;
 
-    @Autowired
+    /**
+     * 在微服务中，认证实现在security-server中，其他服务无实现类。
+     */
+    @Autowired(required = false)
     private UserDetailsExecutor userDetailsExecutor;
 
     @Autowired

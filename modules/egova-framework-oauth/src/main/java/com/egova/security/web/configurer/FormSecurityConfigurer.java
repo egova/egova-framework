@@ -3,6 +3,7 @@ package com.egova.security.web.configurer;
 import com.egova.security.core.configurer.HttpSecurityConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -12,10 +13,13 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 public class FormSecurityConfigurer implements HttpSecurityConfigurer
 {
 
-	@Autowired
+	/**
+	 * 在微服务中，认证实现在security-server中，其他服务无实现类。
+	 */
+	@Autowired(required = false)
 	private AuthenticationFailureHandler defaultAuthenticationFailureHandler;
 
-	@Autowired
+	@Autowired(required = false)
 	private AuthenticationSuccessHandler defaultAuthenticationSuccessHandler;
 
 
@@ -23,12 +27,16 @@ public class FormSecurityConfigurer implements HttpSecurityConfigurer
 	public void configure(HttpSecurity http) throws Exception
 	{
 
-		http.formLogin()
+		FormLoginConfigurer<HttpSecurity> configurer = http.formLogin()
 				.loginPage("/authentication/required")
-				.loginProcessingUrl("/authentication/form")
-				.successHandler(defaultAuthenticationSuccessHandler)
-				.failureHandler(defaultAuthenticationFailureHandler);
+				.loginProcessingUrl("/authentication/form");
 
+		if (defaultAuthenticationSuccessHandler != null) {
+			configurer.successHandler(defaultAuthenticationSuccessHandler);
+		}
+		if (defaultAuthenticationFailureHandler != null) {
+			configurer.failureHandler(defaultAuthenticationFailureHandler);
+		}
 	}
 
 
