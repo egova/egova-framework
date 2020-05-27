@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ser.impl.UnwrappingBeanSerializer;
 import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase;
 import com.fasterxml.jackson.databind.util.NameTransformer;
 import com.flagwind.lang.ExtensibleObject;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -154,8 +155,11 @@ public class ExtensibleObjectSerializer extends BeanSerializerBase {
         }
 
         Map<String, Object> extras = entity.getExtras();
-        for (String key : extras.keySet()) {
-            gen.writeObjectField(key, extras.get(key));
+        // 为null则序列化失败
+        if (!CollectionUtils.isEmpty(extras)) {
+            for (String key : extras.keySet()) {
+                gen.writeObjectField(key, extras.get(key));
+            }
         }
 
         gen.writeEndObject();
