@@ -6,6 +6,13 @@ import lombok.NoArgsConstructor;
 
 /**
  * 文件路径
+ * ************结构说明************
+ * url      http://www.egova.top:1314/files/attachment/images/png/2020041392712.png
+ * path     /files/attachment/images/png/2020041392712.png
+ * type     png
+ * name     2020041392712.png
+ * ************结构说明************
+ *
  */
 @Data
 @NoArgsConstructor

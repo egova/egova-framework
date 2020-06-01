@@ -11,7 +11,7 @@ import java.util.List;
  * @description: 文件操作客户端
  * @date 2020-04-20 16:53:22
  */
-public interface UploadFileClient {
+public interface FileClient {
 
     <F extends InputStreamSource> FilePath upload(String suffix, F file, String... directories);
 
@@ -27,4 +27,8 @@ public interface UploadFileClient {
 
 
     List<FilePath> upload(File[] files, String... directories);
+
+    FilePath parsePath(String url);
+
+    boolean deleteFile(FilePath filePath);
 }
