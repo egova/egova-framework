@@ -1,14 +1,8 @@
 package com.egova.minio.config;
 
-import com.egova.file.UploadFileClient;
-import com.egova.minio.DefaultMinioClientTemplate;
-import com.egova.minio.LoadBalancer;
-import com.egova.minio.MinioClientLoadBalancer;
-import com.egova.minio.MinioClientTemplate;
-import com.egova.minio.MinioProperties;
-import com.egova.minio.RandomMinioClientRule;
-import com.egova.minio.Rule;
-import com.egova.minio.file.MinioUploadFileClient;
+import com.egova.file.FileClient;
+import com.egova.minio.*;
+import com.egova.minio.file.MinioFileClient;
 import io.minio.MinioClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,8 +36,8 @@ public class MinioAutoConfiguration {
     }
 
     @Bean
-    public UploadFileClient minioUploadFileClient(MinioClientTemplate template) {
-        return new MinioUploadFileClient(template);
+    public FileClient minioFileClient(MinioClientTemplate template) {
+        return new MinioFileClient(template);
     }
 
     @Bean

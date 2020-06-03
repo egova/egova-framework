@@ -1,8 +1,8 @@
 package com.egova.minio.file;
 
 import com.egova.exception.ExceptionUtils;
+import com.egova.file.FileClient;
 import com.egova.file.FilePath;
-import com.egova.file.UploadFileClient;
 import com.egova.minio.MinioClientTemplate;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.core.io.InputStreamSource;
@@ -17,18 +17,18 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * 底层使用minio实现接口 {@link UploadFileClient}
+ * 底层使用minio实现接口 {@link FileClient}
  *
  * @author 奔波儿灞
  * @since 1.0.0
  */
-public class MinioUploadFileClient implements UploadFileClient {
+public class MinioFileClient implements FileClient {
 
     public static final String BUCKET = "uploadFileClient";
 
     private final MinioClientTemplate template;
 
-    public MinioUploadFileClient(MinioClientTemplate template) {
+    public MinioFileClient(MinioClientTemplate template) {
         this.template = template;
     }
 
@@ -107,4 +107,14 @@ public class MinioUploadFileClient implements UploadFileClient {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
+    // url = http://www.egova.top:1314/xxxxxx/1234.jpg
+    @Override
+    public FilePath parsePath(String url) {
+        return null;
+    }
+
+    @Override
+    public boolean deleteFile(FilePath filePath) {
+        return false;
+    }
 }
