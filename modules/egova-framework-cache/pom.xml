@@ -21,6 +21,12 @@
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.egova</groupId>
+            <artifactId>egova-framework-jackson</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
         <dependency>
             <groupId>com.alibaba</groupId>

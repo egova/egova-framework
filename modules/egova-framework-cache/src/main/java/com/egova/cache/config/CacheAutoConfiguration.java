@@ -4,6 +4,7 @@ import com.egova.cache.CacheKeyGenerator;
 import com.egova.cache.CacheMessageListener;
 import com.egova.cache.RedisEhcacheCacheManager;
 import com.egova.cache.RedisEhcacheProperties;
+import com.egova.json.JsonMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -38,10 +39,11 @@ public class CacheAutoConfiguration {
     @Bean
     @ConditionalOnBean(RedisEhcacheCacheManager.class)
     public RedisMessageListenerContainer redisMessageListenerContainer(RedisTemplate<Object, Object> redisTemplate,
-                                                                       RedisEhcacheCacheManager redisEhcacheCacheManager) {
+                                                                       RedisEhcacheCacheManager redisEhcacheCacheManager,
+                                                                       JsonMapping jsonMapping) {
         RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
         redisMessageListenerContainer.setConnectionFactory(Objects.requireNonNull(redisTemplate.getConnectionFactory()));
-        CacheMessageListener cacheMessageListener = new CacheMessageListener(redisTemplate, redisEhcacheCacheManager);
+        CacheMessageListener cacheMessageListener = new CacheMessageListener(redisTemplate, redisEhcacheCacheManager, jsonMapping);
         redisMessageListenerContainer.addMessageListener(cacheMessageListener, new ChannelTopic(redisEhcacheProperties.getRedis().getTopic()));
         return redisMessageListenerContainer;
     }

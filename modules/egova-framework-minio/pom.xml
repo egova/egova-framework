@@ -19,7 +19,6 @@
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
@@ -48,6 +47,10 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>

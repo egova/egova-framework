@@ -1,10 +1,12 @@
 package com.egova.cloud.oauth2;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.security.oauth2.provider.token.RemoteTokenServices;
 import org.springframework.web.client.RestTemplate;
 
@@ -38,7 +40,12 @@ public class RemoteTokenServicesAutoConfiguration implements ApplicationListener
             log.debug("remoteTokenServices not definition");
         }
         if (tokenServices != null) {
-            tokenServices.setRestTemplate(restTemplate);
+            // 增加微服务调用认证中心，是否支持服务发现。关闭后，需要手动配置认证中心IP地址。默认开启，可服务发现，负载均衡
+            ConfigurableEnvironment env = applicationContext.getEnvironment();
+            Boolean discovery = env.getProperty("oauth2.client.discovery", Boolean.class, true);
+            if (BooleanUtils.toBoolean(discovery)) {
+                tokenServices.setRestTemplate(restTemplate);
+            }
         }
     }
 
