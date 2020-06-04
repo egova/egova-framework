@@ -38,7 +38,6 @@ import java.util.List;
  */
 //@Configuration
 @ConditionalOnClass(Feign.class)
-//@EnableFeignClients("com.egova")
 @EnableConfigurationProperties({FeignClientProperties.class, FeignHttpClientProperties.class})
 public class FeignAutoConfiguration {
 
@@ -54,7 +53,6 @@ public class FeignAutoConfiguration {
 
     @Autowired
     private ObjectFactory<HttpMessageConverters> messageConverters;
-
 
 
     @Autowired
@@ -122,10 +120,9 @@ public class FeignAutoConfiguration {
         return new SpringEncoder(feignHttpMessageConverter());
     }
 
-    @Autowired
-    private ObjectMappingCustomer disableAssociativeObjectMapping;
-
     private ObjectFactory<HttpMessageConverters> feignHttpMessageConverter() {
+        // 之所以不从容器中获取对象，是考虑到如果被额外定制过，将会出现冲突，因此内部创建
+        ObjectMappingCustomer disableAssociativeObjectMapping = new ObjectMappingCustomer(false);
         List<HttpMessageConverter<?>> converters = new ArrayList<>(messageConverters.getObject().getConverters());
         for (int i = 0; i < converters.size(); i++) {
             HttpMessageConverter converter = converters.get(i);

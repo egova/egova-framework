@@ -29,7 +29,7 @@ public class MinioFileClient implements FileClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioFileClient.class);
 
-    public static final String BUCKET = "uploadFileClient";
+    public static final String BUCKET = "fileclient";
 
     private final String requestUrl;
 
