@@ -5,6 +5,9 @@ import com.egova.file.FileClient;
 import com.egova.file.FilePath;
 import com.egova.minio.MinioClientTemplate;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,12 +27,17 @@ import java.util.stream.Collectors;
  */
 public class MinioFileClient implements FileClient {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MinioFileClient.class);
+
     public static final String BUCKET = "uploadFileClient";
+
+    private final String requestUrl;
 
     private final MinioClientTemplate template;
 
-    public MinioFileClient(MinioClientTemplate template) {
+    public MinioFileClient(MinioClientTemplate template, String requestUrl) {
         this.template = template;
+        this.requestUrl = requestUrl;
     }
 
     @Override
@@ -38,8 +46,8 @@ public class MinioFileClient implements FileClient {
         FilePath filePath = new FilePath();
         filePath.setName(object);
         filePath.setType(suffix);
-        filePath.setPath(object);
-        filePath.setUrl(object);
+        filePath.setPath(null);
+        filePath.setUrl(requestUrl + "/" + object + "." + suffix);
         try {
             template.putObject(BUCKET, filePath.getName(), file.getInputStream());
         } catch (IOException e) {
@@ -62,8 +70,8 @@ public class MinioFileClient implements FileClient {
         FilePath filePath = new FilePath();
         filePath.setName(object);
         filePath.setType(extension);
-        filePath.setPath(object);
-        filePath.setUrl(object);
+        filePath.setPath(null);
+        filePath.setUrl(requestUrl + "/" + object + "." + extension);
         try {
             template.putObject(BUCKET, filePath.getName(), file.getInputStream());
         } catch (IOException e) {
@@ -86,8 +94,8 @@ public class MinioFileClient implements FileClient {
         FilePath filePath = new FilePath();
         filePath.setName(object);
         filePath.setType(extension);
-        filePath.setPath(object);
-        filePath.setUrl(object);
+        filePath.setPath(null);
+        filePath.setUrl(requestUrl + "/" + object + "." + extension);
         try {
             template.putObject(BUCKET, filePath.getName(), new FileInputStream(file));
         } catch (IOException e) {
@@ -110,11 +118,33 @@ public class MinioFileClient implements FileClient {
     // url = http://www.egova.top:1314/xxxxxx/1234.jpg
     @Override
     public FilePath parsePath(String url) {
-        return null;
+        String prefix = requestUrl + "/";
+        if (!StringUtils.startsWith(url, prefix)) {
+            return null;
+        }
+        String filename = StringUtils.removeStart(url, prefix);
+        String object = FilenameUtils.getBaseName(filename);
+        if (StringUtils.isBlank(object)) {
+            return null;
+        }
+        String extension = FilenameUtils.getExtension(filename);
+        FilePath filePath = new FilePath();
+        filePath.setName(object);
+        filePath.setType(extension);
+        filePath.setPath(null);
+        filePath.setUrl(url);
+        return filePath;
     }
 
     @Override
     public boolean deleteFile(FilePath filePath) {
-        return false;
+        try {
+            template.removeObject(BUCKET, filePath.getName());
+            return true;
+        } catch (Exception e) {
+            LOG.warn("remove file failed", e);
+            return false;
+        }
     }
+
 }
