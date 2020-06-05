@@ -1,9 +1,10 @@
 package com.egova.cloud.feign;
 
 
-import com.egova.exception.FrameworkException;
-import com.egova.json.JsonMapping;
+import com.egova.exception.ExceptionUtils;
 import com.egova.web.rest.ResponseResult;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import feign.Response;
 import feign.codec.Decoder;
@@ -26,26 +27,31 @@ public class ResponseResultDecoder implements Decoder {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResponseResultDecoder.class);
 
-    private final Decoder decoder;
-    private final JsonMapping jsonMapping;
+    private static final String HAS_ERROR = "hasError";
+    private static final String MESSAGE = "message";
+    private static final String RESULT = "result";
 
-    ResponseResultDecoder(Decoder decoder, JsonMapping jsonMapping) {
+    private final Decoder decoder;
+    private final ObjectMapper objectMapper;
+
+    ResponseResultDecoder(Decoder decoder) {
         this.decoder = decoder;
-        this.jsonMapping = jsonMapping;
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
     public Object decode(Response response, Type type) throws IOException, FeignException {
-        // 接收类型不是OperateResult，则拆包
+        // 接收类型不是ResponseResult，则拆包
+        // 该地方type是原始类型，而response为包装过的数据，拆包时暂时直接操作json
         if (!isResponseResult(type) && isJsonResponse(response)) {
-            LOG.debug("返回类型不是OperateResult，拆包类型: {}", type.getClass().getName());
-
-            ResponseResult result = jsonMapping.deserialize(response.body().asReader(StandardCharsets.UTF_8), type);
-            if (result.getHasError()) {
-                LOG.debug("返回结果存在错误: {}", result.getMessage());
-                throw new FrameworkException(result.getMessage());
+            LOG.debug("返回类型不是ResponseResult，拆包类型: {}", type.getTypeName());
+            JsonNode result = objectMapper.readTree(response.body().asReader(StandardCharsets.UTF_8));
+            if (result.get(HAS_ERROR).asBoolean()) {
+                LOG.debug("返回结果存在错误: {}", result.get(MESSAGE).textValue());
+                throw ExceptionUtils.api(result.get(MESSAGE).textValue());
             }
-            String json = jsonMapping.serialize(result.getResult(),false);
+            // 这里序列化防止联想，直接操作json
+            String json = result.get(RESULT).toString();
             response = response.toBuilder().body(json, StandardCharsets.UTF_8).build();
         }
         return decoder.decode(response, type);

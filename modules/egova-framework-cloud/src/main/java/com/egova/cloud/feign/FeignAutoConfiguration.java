@@ -1,6 +1,5 @@
 package com.egova.cloud.feign;
 
-import com.egova.json.JsonMapping;
 import com.egova.json.databind.ObjectMappingCustomer;
 import feign.Contract;
 import feign.Feign;
@@ -48,15 +47,11 @@ public class FeignAutoConfiguration {
     @Autowired(
             required = false
     )
-    private List<AnnotatedParameterProcessor> parameterProcessors = new ArrayList();
+    private List<AnnotatedParameterProcessor> parameterProcessors = new ArrayList<>();
 
 
     @Autowired
     private ObjectFactory<HttpMessageConverters> messageConverters;
-
-
-    @Autowired
-    private JsonMapping jsonMapping;
 
     @Bean
     public Contract feignContract(ConversionService feignConversionService) {
@@ -107,7 +102,7 @@ public class FeignAutoConfiguration {
      */
     @Bean
     public Decoder feignDecoder() {
-        return new OptionalDecoder(new ResponseEntityDecoder(new ResponseResultDecoder(new SpringDecoder(feignHttpMessageConverter()), jsonMapping)));
+        return new OptionalDecoder(new ResponseEntityDecoder(new ResponseResultDecoder(new SpringDecoder(feignHttpMessageConverter()))));
     }
 
     /**
