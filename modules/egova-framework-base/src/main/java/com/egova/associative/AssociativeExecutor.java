@@ -149,6 +149,7 @@ public class AssociativeExecutor {
             try {
                 Set<Associative> associatives = EntityAnnotationUtils.getMergedRepeatableAnnotations(field, Associative.class);
 
+
                 for (Associative associative : associatives) {
                     setAssociativeField(associative, obj, field);
                 }

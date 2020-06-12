@@ -65,8 +65,7 @@ public class ObjectMappingCustomer extends ObjectMapper {
 
                 if (ExtensibleObject.class.isAssignableFrom(beanDesc.getBeanClass())) {
                     return new ExtensibleObjectSerializer((BeanSerializerBase) serializer, enableAssociative);
-                }
-                else if (CodeType.class.isAssignableFrom(beanDesc.getBeanClass())) {
+                } else if (CodeType.class.isAssignableFrom(beanDesc.getBeanClass())) {
                     return new CodeTypeJsonSerializer();
                 }
                 return serializer;
