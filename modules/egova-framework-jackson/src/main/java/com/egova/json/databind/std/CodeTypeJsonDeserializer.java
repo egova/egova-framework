@@ -13,7 +13,7 @@ import java.lang.reflect.Constructor;
 
 /**
  * boolean解析器
- * 
+ *
  * @author chendb
  * @date 2016年12月8日 下午11:34:47
  */
@@ -32,16 +32,16 @@ public class CodeTypeJsonDeserializer<E extends CodeType> extends JsonDeserializ
 
         E e = null;
         try {
-            String value = JsonTokenUtils.getParseValue(parser,"value");
+            String value = JsonTokenUtils.getParseValue(parser, "value");
             if (StringUtils.isEmpty(value)) {
                 return null;
             }
             Constructor ctr = clzss.getConstructor(String.class);
-            if(ctr!=null){
+            if (ctr != null) {
                 e = clzss.getConstructor(String.class).newInstance(value);
-            }else {
+            } else {
                 e = clzss.newInstance();
-                EntityTypeHolder.getEntityType(clzss).getField("value").setValue(e,new Object[]{value});
+                EntityTypeHolder.getEntityType(clzss).getField("value").setValue(e, new Object[]{value});
             }
 
         } catch (Exception ex) {

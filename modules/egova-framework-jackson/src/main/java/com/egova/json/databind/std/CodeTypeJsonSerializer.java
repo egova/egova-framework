@@ -14,6 +14,11 @@ import java.io.IOException;
 public class CodeTypeJsonSerializer extends JsonSerializer<CodeType> {
     @Override
     public void serialize(CodeType value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        if (Enum.class.isAssignableFrom(value.getClass())) {
+            Enum e = (Enum) value;
+            gen.writeString(e.name());
+        } else {
             gen.writeString(value.getValue());
+        }
     }
 }
