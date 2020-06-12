@@ -7,6 +7,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.RemoteTokenServices;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,10 +19,7 @@ import org.springframework.web.client.RestTemplate;
  * @since 1.0
  */
 @Slf4j
-//@Configuration
 public class RemoteTokenServicesAutoConfiguration implements ApplicationListener<ApplicationReadyEvent> {
-
-//    private static final Logger LOG = LoggerFactory.getLogger(RemoteTokenServicesAutoConfiguration.class);
 
     private final RestTemplate restTemplate;
 
@@ -46,6 +44,10 @@ public class RemoteTokenServicesAutoConfiguration implements ApplicationListener
             if (BooleanUtils.toBoolean(discovery)) {
                 tokenServices.setRestTemplate(restTemplate);
             }
+            // 提取oauth2用户信息
+            DefaultAccessTokenConverter accessTokenConverter = new DefaultAccessTokenConverter();
+            accessTokenConverter.setUserTokenConverter(new CustomUserAuthenticationConverter());
+            tokenServices.setAccessTokenConverter(accessTokenConverter);
         }
     }
 

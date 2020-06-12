@@ -1,6 +1,5 @@
 package com.egova.cloud.feign;
 
-import com.egova.json.JsonMapping;
 import com.egova.json.databind.ObjectMappingCustomer;
 import feign.Contract;
 import feign.Feign;
@@ -38,7 +37,6 @@ import java.util.List;
  */
 //@Configuration
 @ConditionalOnClass(Feign.class)
-//@EnableFeignClients("com.egova")
 @EnableConfigurationProperties({FeignClientProperties.class, FeignHttpClientProperties.class})
 public class FeignAutoConfiguration {
 
@@ -49,16 +47,11 @@ public class FeignAutoConfiguration {
     @Autowired(
             required = false
     )
-    private List<AnnotatedParameterProcessor> parameterProcessors = new ArrayList();
+    private List<AnnotatedParameterProcessor> parameterProcessors = new ArrayList<>();
 
 
     @Autowired
     private ObjectFactory<HttpMessageConverters> messageConverters;
-
-
-
-    @Autowired
-    private JsonMapping jsonMapping;
 
     @Bean
     public Contract feignContract(ConversionService feignConversionService) {
@@ -109,7 +102,7 @@ public class FeignAutoConfiguration {
      */
     @Bean
     public Decoder feignDecoder() {
-        return new OptionalDecoder(new ResponseEntityDecoder(new ResponseResultDecoder(new SpringDecoder(feignHttpMessageConverter()), jsonMapping)));
+        return new OptionalDecoder(new ResponseEntityDecoder(new ResponseResultDecoder(new SpringDecoder(feignHttpMessageConverter()))));
     }
 
     /**
@@ -122,10 +115,9 @@ public class FeignAutoConfiguration {
         return new SpringEncoder(feignHttpMessageConverter());
     }
 
-    @Autowired
-    private ObjectMappingCustomer disableAssociativeObjectMapping;
-
     private ObjectFactory<HttpMessageConverters> feignHttpMessageConverter() {
+        // 之所以不从容器中获取对象，是考虑到如果被额外定制过，将会出现冲突，因此内部创建
+        ObjectMappingCustomer disableAssociativeObjectMapping = new ObjectMappingCustomer(false);
         List<HttpMessageConverter<?>> converters = new ArrayList<>(messageConverters.getObject().getConverters());
         for (int i = 0; i < converters.size(); i++) {
             HttpMessageConverter converter = converters.get(i);

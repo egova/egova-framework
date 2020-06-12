@@ -3,6 +3,7 @@ package com.egova.cloud.config;
 import com.egova.cloud.feign.EnableFeignClients;
 import com.egova.cloud.feign.FeignAutoConfiguration;
 import com.egova.cloud.hystrix.HystrixAutoConfiguration;
+import com.egova.cloud.oauth2.CheckTokenEndpointAutoConfiguration;
 import com.egova.cloud.oauth2.RemoteTokenServicesAutoConfiguration;
 import com.egova.cloud.web.RestTemplateAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -15,7 +16,13 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  */
 @EnableDiscoveryClient
 @EnableFeignClients("com.egova")
-@ImportAutoConfiguration({FeignAutoConfiguration.class, HystrixAutoConfiguration.class, RemoteTokenServicesAutoConfiguration.class, RestTemplateAutoConfiguration.class})
+@ImportAutoConfiguration({
+        FeignAutoConfiguration.class,
+        HystrixAutoConfiguration.class,
+        RemoteTokenServicesAutoConfiguration.class,
+        CheckTokenEndpointAutoConfiguration.class,
+        RestTemplateAutoConfiguration.class
+})
 public class CloudAutoConfiguration {
 
 

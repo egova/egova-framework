@@ -1,12 +1,20 @@
 package com.egova.minio.config;
 
 import com.egova.file.FileClient;
-import com.egova.minio.*;
+import com.egova.minio.DefaultMinioClientTemplate;
+import com.egova.minio.LoadBalancer;
+import com.egova.minio.MinioClientLoadBalancer;
+import com.egova.minio.MinioClientTemplate;
+import com.egova.minio.MinioProperties;
+import com.egova.minio.RandomMinioClientRule;
+import com.egova.minio.Rule;
 import com.egova.minio.file.MinioFileClient;
 import io.minio.MinioClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 
 /**
  * minio模块配置
@@ -16,6 +24,9 @@ import org.springframework.context.annotation.Bean;
  */
 @EnableConfigurationProperties(MinioProperties.class)
 public class MinioAutoConfiguration {
+
+    @Value("${egova.upload.request-url:/files")
+    private String requestUrl;
 
     @Bean
     @ConditionalOnMissingBean
@@ -36,8 +47,9 @@ public class MinioAutoConfiguration {
     }
 
     @Bean
+    @Order(90)
     public FileClient minioFileClient(MinioClientTemplate template) {
-        return new MinioFileClient(template);
+        return new MinioFileClient(template, requestUrl);
     }
 
     @Bean

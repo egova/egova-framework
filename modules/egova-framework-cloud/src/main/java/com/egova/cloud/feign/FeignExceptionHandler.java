@@ -24,7 +24,7 @@ public class FeignExceptionHandler {
     @ExceptionHandler(FeignException.class)
     public ResponseResult<Void> handleFeignException(FeignException e) {
         String msg = e.getMessage();
-        LOG.warn("handle FeignException: {}", msg);
+        LOG.warn("handle FeignException", e);
         return ResponseResults.error(msg);
     }
 
