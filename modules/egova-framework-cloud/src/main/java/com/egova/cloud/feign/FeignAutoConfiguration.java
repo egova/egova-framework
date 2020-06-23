@@ -101,8 +101,18 @@ public class FeignAutoConfiguration {
      * @return feignDecoder
      */
     @Bean
-    public Decoder feignDecoder() {
-        return new OptionalDecoder(new ResponseEntityDecoder(new ResponseResultDecoder(new SpringDecoder(feignHttpMessageConverter()))));
+    public Decoder feignDecoder(ResultExtractor extractor) {
+        return new OptionalDecoder(new ResponseEntityDecoder(new ResponseResultDecoder(new SpringDecoder(feignHttpMessageConverter()), extractor)));
+    }
+
+    /**
+     * 拆包提取器
+     *
+     * @return DefaultResultExtractor
+     */
+    @Bean
+    public ResultExtractor extractor() {
+        return new DefaultResultExtractor();
     }
 
     /**
