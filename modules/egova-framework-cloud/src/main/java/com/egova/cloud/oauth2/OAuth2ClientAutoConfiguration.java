@@ -2,6 +2,7 @@ package com.egova.cloud.oauth2;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
@@ -43,6 +44,7 @@ public class OAuth2ClientAutoConfiguration {
         return details;
     }
 
+    @LoadBalanced
     @Bean("egovaOAuth2RestTemplate")
     public OAuth2RestTemplate oAuth2RestTemplate() {
         final OAuth2RestTemplate oAuth2RestTemplate = new OAuth2RestTemplate(resourceDetails());
