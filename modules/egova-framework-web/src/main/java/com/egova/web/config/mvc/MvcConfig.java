@@ -86,7 +86,7 @@ public class MvcConfig extends WebMvcConfigurationSupport {
         }
         if (StringUtils.isNotBlank(staticResourceProperties.getFileDir())) {
             log.info("静态文件映射 /***  -->" + staticResourceProperties.getFileDir() + "webApps/" + "  " + staticResourceProperties.getFileDir() + "/webApps/root/");
-            registry.addResourceHandler("/**").addResourceLocations(staticResourceProperties.getFileDir() + "webApps/", staticResourceProperties.getFileDir() + "/webApps/root/", "classpath:/static/", "WEB-INF/static/");
+            registry.addResourceHandler("/**").addResourceLocations(staticResourceProperties.getFileDir() + "/webApps/", staticResourceProperties.getFileDir() + "/webApps/root/", "classpath:/static/", "WEB-INF/static/");
         }
 
 

@@ -100,7 +100,7 @@ public class ResourceServerAutoConfiguration extends ResourceServerConfiguration
         }
 
         @Override
-        public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+        public void configure(ResourceServerSecurityConfigurer resources) {
             resources.resourceId("egova-resource");
         }
     }

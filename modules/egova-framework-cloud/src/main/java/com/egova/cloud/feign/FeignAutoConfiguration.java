@@ -9,6 +9,7 @@ import feign.codec.Encoder;
 import feign.optionals.OptionalDecoder;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,8 +93,8 @@ public class FeignAutoConfiguration {
      * @return OAuth2FeignRequestInterceptor
      */
     @Bean
-    public RequestInterceptor oauth2FeignRequestInterceptor() {
-        return new OAuth2FeignRequestInterceptor();
+    public RequestInterceptor oauth2FeignRequestInterceptor(@Qualifier("egovaOAuth2RestTemplate") OAuth2RestTemplate oAuth2RestTemplate) {
+        return new OAuth2FeignRequestInterceptor(oAuth2RestTemplate);
     }
 
     /**
