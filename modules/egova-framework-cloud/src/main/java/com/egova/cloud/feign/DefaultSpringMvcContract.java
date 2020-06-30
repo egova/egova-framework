@@ -1,5 +1,6 @@
 package com.egova.cloud.feign;
 
+import com.egova.cloud.FeignToken;
 import com.egova.web.annotation.RequestDecorating;
 import feign.MethodMetadata;
 import org.springframework.cloud.openfeign.AnnotatedParameterProcessor;
@@ -22,6 +23,7 @@ public class DefaultSpringMvcContract extends SpringMvcContract {
         super(annotatedParameterProcessors, conversionService);
     }
 
+
     @Override
     protected void processAnnotationOnMethod(MethodMetadata data, Annotation methodAnnotation, Method method) {
         super.processAnnotationOnMethod(data, methodAnnotation, method);
@@ -29,6 +31,11 @@ public class DefaultSpringMvcContract extends SpringMvcContract {
             RequestDecorating methodMapping = AnnotatedElementUtils.findMergedAnnotation(method, RequestDecorating.class);
             assert methodMapping != null;
             data.template().query("@" + methodMapping.name(), methodMapping.value());
+        }
+        if (methodAnnotation instanceof FeignToken || methodAnnotation.annotationType().isAnnotationPresent(FeignToken.class)) {
+            FeignToken feignToken = AnnotatedElementUtils.findMergedAnnotation(method, FeignToken.class);
+            assert feignToken != null;
+            data.template().query("$obtain", feignToken.obtain().name());
         }
     }
 }

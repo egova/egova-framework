@@ -23,6 +23,16 @@ final class RequestUtils {
         throw new IllegalStateException("Utils");
     }
 
+    static String url() {
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (requestAttributes == null) {
+            // 非web环境
+            return "";
+        }
+        HttpServletRequest request = requestAttributes.getRequest();
+        return request != null ? request.getRequestURL().toString() : "";
+    }
+
     static String getToken() {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (requestAttributes == null) {
