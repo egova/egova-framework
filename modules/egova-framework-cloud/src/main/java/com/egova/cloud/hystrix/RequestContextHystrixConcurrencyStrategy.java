@@ -1,5 +1,8 @@
 package com.egova.cloud.hystrix;
 
+import com.egova.cloud.feign.RequestUtils;
+import com.egova.cloud.feign.TokenHolder;
+import com.egova.cloud.web.UserContextHolder;
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
@@ -69,27 +72,35 @@ public class RequestContextHystrixConcurrencyStrategy extends HystrixConcurrency
     public <T> Callable<T> wrapCallable(Callable<T> callable) {
         return existingConcurrencyStrategy != null
                 ? existingConcurrencyStrategy
-                .wrapCallable(new RequestAttributeAwareCallable<>(callable, RequestContextHolder.getRequestAttributes()))
-                : super.wrapCallable(new RequestAttributeAwareCallable<>(callable, RequestContextHolder.getRequestAttributes()));
+                .wrapCallable(new RequestAttributeAwareCallable<>(callable, RequestContextHolder.getRequestAttributes(), RequestUtils.getToken()))
+                : super.wrapCallable(new RequestAttributeAwareCallable<>(callable, RequestContextHolder.getRequestAttributes(), RequestUtils.getToken()));
     }
 
     static class RequestAttributeAwareCallable<T> implements Callable<T> {
 
         private final Callable<T> delegate;
         private final RequestAttributes requestAttributes;
+        private final String token;
 
-        RequestAttributeAwareCallable(Callable<T> callable, RequestAttributes requestAttributes) {
+        RequestAttributeAwareCallable(Callable<T> callable, RequestAttributes requestAttributes, String token) {
             this.delegate = callable;
             this.requestAttributes = requestAttributes;
+            this.token = token;
         }
 
         @Override
         public T call() throws Exception {
             try {
                 RequestContextHolder.setRequestAttributes(requestAttributes);
+                // 防止异步线程执行任务时，而http线程已经清理request导致feign丢失token
+                TokenHolder.setup(token);
+                // 防止异步线程执行任务时，而http线程已经清理request导致后续丢失用户信息
+                UserContextHolder.setup();
                 return delegate.call();
             } finally {
                 RequestContextHolder.resetRequestAttributes();
+                TokenHolder.cleanup();
+                UserContextHolder.cleanup();
             }
         }
     }

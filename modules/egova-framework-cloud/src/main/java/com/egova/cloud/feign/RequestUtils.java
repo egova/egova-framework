@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author 奔波儿灞
  * @since 1.0
  */
-final class RequestUtils {
+public final class RequestUtils {
 
     private static final String TOKEN_NAME = "access_token";
     private static final String TOKEN_HEADER = "Authorization";
@@ -23,7 +23,7 @@ final class RequestUtils {
         throw new IllegalStateException("Utils");
     }
 
-    static String getToken() {
+    public static String getToken() {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (requestAttributes == null) {
             // 非web环境
