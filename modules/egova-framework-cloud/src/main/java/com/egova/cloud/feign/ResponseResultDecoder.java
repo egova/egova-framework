@@ -1,10 +1,7 @@
 package com.egova.cloud.feign;
 
 
-import com.egova.exception.ExceptionUtils;
 import com.egova.web.rest.ResponseResult;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import feign.Response;
 import feign.codec.Decoder;
@@ -27,16 +24,12 @@ public class ResponseResultDecoder implements Decoder {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResponseResultDecoder.class);
 
-    private static final String HAS_ERROR = "hasError";
-    private static final String MESSAGE = "message";
-    private static final String RESULT = "result";
-
     private final Decoder decoder;
-    private final ObjectMapper objectMapper;
+    private final ResultExtractor extractor;
 
-    ResponseResultDecoder(Decoder decoder) {
+    ResponseResultDecoder(Decoder decoder, ResultExtractor extractor) {
         this.decoder = decoder;
-        this.objectMapper = new ObjectMapper();
+        this.extractor = extractor;
     }
 
     @Override
@@ -45,13 +38,7 @@ public class ResponseResultDecoder implements Decoder {
         // 该地方type是原始类型，而response为包装过的数据，拆包时暂时直接操作json
         if (!isResponseResult(type) && isJsonResponse(response)) {
             LOG.debug("返回类型不是ResponseResult，拆包类型: {}", type.getTypeName());
-            JsonNode result = objectMapper.readTree(response.body().asReader(StandardCharsets.UTF_8));
-            if (result.get(HAS_ERROR).asBoolean()) {
-                LOG.debug("返回结果存在错误: {}", result.get(MESSAGE).textValue());
-                throw ExceptionUtils.api(result.get(MESSAGE).textValue());
-            }
-            // 这里序列化防止联想，直接操作json
-            String json = result.get(RESULT).toString();
+            String json = extractor.extract(response.body().asReader(StandardCharsets.UTF_8));
             response = response.toBuilder().body(json, StandardCharsets.UTF_8).build();
         }
         return decoder.decode(response, type);
