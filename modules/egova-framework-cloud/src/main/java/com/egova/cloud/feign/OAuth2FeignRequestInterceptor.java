@@ -36,12 +36,9 @@ public class OAuth2FeignRequestInterceptor implements RequestInterceptor {
     public void apply(RequestTemplate template) {
 
 
-        String url = RequestUtils.url();
-
-        log.info("feign oauth client:{}", url);
-
         if (template.queries().containsKey(TOKEN_OBTAIN)) {
             String obtain = template.queries().get(TOKEN_OBTAIN).stream().collect(Collectors.toList()).get(0);
+
             if (StringUtils.equalsIgnoreCase(obtain, FeignToken.Obtain.local.name())) {
                 template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE, TokenHolder.current()));
                 return;
@@ -68,35 +65,6 @@ public class OAuth2FeignRequestInterceptor implements RequestInterceptor {
             }
         }
 
-//        if (token != null) {
-//            if (!url.contains("/free/")) {
-//                template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE, token));
-//            }
-//        } else {
-////            if (url.contains("/unity/")) {
-////                template.header(AUTHORIZATION_HEADER,
-////                        String.format("%s %s",
-////                                BEARER_TOKEN_TYPE,
-////                                oAuth2RestTemplate.getAccessToken().toString()));
-//////                template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE, token));
-////            }
-//        }
-//        if (token != null && !url.contains("/free/")) {
-//            template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE, token));
-//        } else {
-//            if (token == null && !url.contains("/free/")
-////            log.info("feign oauth client1:{}", template.request().url());
-////            log.info("feign oauth client2:{}", template.toString());
-////            log.info("feign oauth client3:{}", template.url());
-////            if (!template.request().url().contains("/free/")) {
-////                // 作为个Client读Properties获取Token 用
-////                log.debug("Constructing Header {} for Token {}", AUTHORIZATION_HEADER, BEARER_TOKEN_TYPE);
-////                template.header(AUTHORIZATION_HEADER,
-////                        String.format("%s %s",
-////                                BEARER_TOKEN_TYPE,
-////                                oAuth2RestTemplate.getAccessToken().toString()));
-////            }
-//        }
     }
 
 }
