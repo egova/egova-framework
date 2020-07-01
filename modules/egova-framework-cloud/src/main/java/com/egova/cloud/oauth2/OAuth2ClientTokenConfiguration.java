@@ -6,16 +6,12 @@ import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
 import org.springframework.security.oauth2.common.AuthenticationScheme;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 
 /**
  * @author chendb
  * @description:
  * @date 2020-06-28 13:37:20
  */
-@EnableOAuth2Client
-
-
 @EnableConfigurationProperties(OAuth2ClientProperties.class)
 public class OAuth2ClientTokenConfiguration {
 

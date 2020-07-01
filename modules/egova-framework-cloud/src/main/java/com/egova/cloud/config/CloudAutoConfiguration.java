@@ -15,7 +15,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * @description: 微服务自动配置
  * @date 2020-04-18 10:09:49
  */
-//@EnableOAuth2Client
 @EnableDiscoveryClient
 @EnableFeignClients("com.egova")
 @ImportAutoConfiguration({
