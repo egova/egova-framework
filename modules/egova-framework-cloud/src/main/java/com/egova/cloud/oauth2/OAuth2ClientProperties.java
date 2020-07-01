@@ -15,5 +15,5 @@ public class OAuth2ClientProperties {
     private String accessTokenUrl;
     private String clientId;
     private String clientSecret;
-    private String clientAuthenticationScheme;
+    private String clientAuthenticationScheme = "header";
 }

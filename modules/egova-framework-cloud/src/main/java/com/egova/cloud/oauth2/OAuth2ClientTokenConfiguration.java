@@ -15,7 +15,6 @@ import org.springframework.security.oauth2.common.AuthenticationScheme;
 @EnableConfigurationProperties(OAuth2ClientProperties.class)
 public class OAuth2ClientTokenConfiguration {
 
-
     @Bean("egovaOAuth2RestTemplate")
     public OAuth2RestTemplate oAuth2RestTemplate(OAuth2ClientProperties oAuth2ClientProperties) {
 
