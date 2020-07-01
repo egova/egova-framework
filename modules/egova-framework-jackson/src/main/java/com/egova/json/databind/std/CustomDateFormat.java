@@ -19,6 +19,11 @@ public class CustomDateFormat extends SimpleDateFormat {
      */
     private static final long serialVersionUID = 9211535820162009046L;
 
+    // 默认序列化格式，否则使用user.language.format
+    public CustomDateFormat() {
+        super("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    }
+
     @Override
     public Date parse(String source) throws ParseException {
         try {
