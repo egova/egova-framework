@@ -37,10 +37,6 @@ public class OAuth2FeignRequestInterceptor implements RequestInterceptor {
         if (template.queries().containsKey(TOKEN_OBTAIN)) {
             String obtain = template.queries().get(TOKEN_OBTAIN).stream().collect(Collectors.toList()).get(0);
 
-            if (StringUtils.equalsIgnoreCase(obtain, FeignToken.Obtain.local.name())) {
-                template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE, TokenHolder.current()));
-                return;
-            }
 
             if (StringUtils.equalsIgnoreCase(obtain, FeignToken.Obtain.parent.name())) {
                 String token = RequestUtils.getToken();

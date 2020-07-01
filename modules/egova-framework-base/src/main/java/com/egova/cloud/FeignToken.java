@@ -16,6 +16,6 @@ public @interface FeignToken {
     Obtain obtain() default Obtain.parent;
 
     enum Obtain {
-        parent, client, local
+        parent, client
     }
 }
