@@ -6,8 +6,6 @@ import feign.RequestTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.stream.Collectors;
 
@@ -44,11 +42,6 @@ public class OAuth2FeignRequestInterceptor implements RequestInterceptor {
                 return;
             }
 
-            ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            if (requestAttributes == null) {
-                // 非web环境
-                return;
-            }
             if (StringUtils.equalsIgnoreCase(obtain, FeignToken.Obtain.parent.name())) {
                 String token = RequestUtils.getToken();
                 if (!StringUtils.isEmpty(token)) {
