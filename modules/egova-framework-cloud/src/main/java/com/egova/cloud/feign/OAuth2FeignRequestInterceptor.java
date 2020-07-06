@@ -32,11 +32,9 @@ public class OAuth2FeignRequestInterceptor implements RequestInterceptor {
 
     @Override
     public void apply(RequestTemplate template) {
-
-
-        if (template.queries().containsKey(TOKEN_OBTAIN)) {
+        // 如果有token，则一直传递，否则用client token
+        if (RequestUtils.getToken() == null && template.queries().containsKey(TOKEN_OBTAIN)) {
             String obtain = template.queries().get(TOKEN_OBTAIN).stream().collect(Collectors.toList()).get(0);
-
 
             if (StringUtils.equalsIgnoreCase(obtain, FeignToken.Obtain.parent.name())) {
                 String token = RequestUtils.getToken();
