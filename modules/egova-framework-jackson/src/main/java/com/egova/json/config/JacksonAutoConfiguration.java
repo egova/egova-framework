@@ -3,6 +3,7 @@ package com.egova.json.config;
 import com.egova.json.JacksonJsonMapping;
 import com.egova.json.JsonMapping;
 import com.egova.json.databind.ObjectMappingCustomer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -17,22 +18,22 @@ import org.springframework.core.annotation.Order;
 @Order(1)
 public class JacksonAutoConfiguration {
 
-    @Bean
+    @Bean("enableAssociativeObjectMapping")
     @Primary
-    @ConditionalOnMissingBean(value = ObjectMappingCustomer.class, name = "enableAssociativeObjectMapping")
+    @ConditionalOnMissingBean(name = "enableAssociativeObjectMapping")
     public ObjectMappingCustomer enableAssociativeObjectMapping() {
         return new ObjectMappingCustomer(true);
     }
 
 
-    @Bean
-    @ConditionalOnMissingBean(value = ObjectMappingCustomer.class, name = "disableAssociativeObjectMapping")
+    @Bean("disableAssociativeObjectMapping")
+    @ConditionalOnMissingBean(name = "disableAssociativeObjectMapping")
     public ObjectMappingCustomer disableAssociativeObjectMapping() {
         return new ObjectMappingCustomer(false);
     }
 
     @Bean
-    public JsonMapping JacksonJsonMapper(ObjectMappingCustomer enableAssociativeObjectMapping, ObjectMappingCustomer disableAssociativeObjectMapping) {
+    public JsonMapping JacksonJsonMapper(@Qualifier("enableAssociativeObjectMapping") ObjectMappingCustomer enableAssociativeObjectMapping, @Qualifier("disableAssociativeObjectMapping") ObjectMappingCustomer disableAssociativeObjectMapping) {
         return new JacksonJsonMapping(enableAssociativeObjectMapping, disableAssociativeObjectMapping);
     }
 }
