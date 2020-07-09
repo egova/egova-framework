@@ -16,6 +16,7 @@ import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -77,7 +78,7 @@ public class AssociativeExecutor {
         }
     }
 
-    private static void setAssociativeField(Associative associative, ExtensibleObject obj, EntityField field) {
+    private static String setAssociativeField(Associative associative, ExtensibleObject obj, EntityField field) {
 
 
         String newFieldName = StringUtils.isBlank(associative.name()) ? field.getName() + "Text" : associative.name();
@@ -91,7 +92,7 @@ public class AssociativeExecutor {
             newFieldName = getExpressionValue(newFieldName, obj, field);
         }
         if (obj.contains(newFieldName)) {
-            return;
+            return null;
         }
         AssociativeProvider provider = getProvider(associative);
         if (provider == null) {
@@ -100,7 +101,7 @@ public class AssociativeExecutor {
                 throw ExceptionUtils.framework(message);
             }
             LOG.warn(message);
-            return;
+            return null;
         }
         try {
             Object v = field.getValue(obj, null);
@@ -112,9 +113,11 @@ public class AssociativeExecutor {
                 value = provider.associate(Arrays.asList(v, associative.extras()).toArray());
             }
             obj.set(newFieldName, value);
+            return newFieldName;
         } catch (Exception ex) {
             LOG.error(String.format("%s对象json 联想序列化%s字段时异常", obj.getClass().getSimpleName(), field.getName()), ex);
         }
+        return null;
     }
 
 
@@ -143,15 +146,19 @@ public class AssociativeExecutor {
 //        return v;
 //    }
 
-    public static void execute(ExtensibleObject obj) {
+    public static List<String> execute(ExtensibleObject obj) {
         List<EntityField> fields = EntityTypeHolder.getFields(obj.getClass());
+        List<String> names = new ArrayList<>();
         for (EntityField field : fields) {
             try {
                 Set<Associative> associatives = EntityAnnotationUtils.getMergedRepeatableAnnotations(field, Associative.class);
 
 
                 for (Associative associative : associatives) {
-                    setAssociativeField(associative, obj, field);
+                    String name = setAssociativeField(associative, obj, field);
+                    if (name != null) {
+                        names.add(name);
+                    }
                 }
             } catch (Exception ex) {
                 String message = String.format("分析%s对象的%s联想属性出现异常", obj.getClass().getSimpleName(), field.getName());
@@ -159,5 +166,6 @@ public class AssociativeExecutor {
                 throw ExceptionUtils.framework(message, ex);
             }
         }
+        return names;
     }
 }

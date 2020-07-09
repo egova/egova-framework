@@ -17,12 +17,14 @@ import com.flagwind.lang.ExtensibleObject;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
  * 对ExtensibleObject实体序列化处理
- * 
+ *
  * @author hbche
  * @date 2016年11月16日 上午9:20:56
  */
@@ -149,9 +151,10 @@ public class ExtensibleObjectSerializer extends BeanSerializerBase {
 
         ExtensibleObject entity = (ExtensibleObject) bean;
 
+        List<String> associativeNames = Collections.emptyList();
         if (this.enableAssociative) {
             // 检测联想属性配置并增加到扩展字段中
-            AssociativeExecutor.execute(entity);
+            associativeNames = AssociativeExecutor.execute(entity);
         }
 
         Map<String, Object> extras = entity.getExtras();
@@ -160,6 +163,8 @@ public class ExtensibleObjectSerializer extends BeanSerializerBase {
             for (String key : extras.keySet()) {
                 gen.writeObjectField(key, extras.get(key));
             }
+            // 移除掉extras中设置的联想属性，防止后续redis缓存序列化为fastjson时，导致autoType问题
+            associativeNames.forEach(extras::remove);
         }
 
         gen.writeEndObject();
