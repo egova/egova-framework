@@ -92,7 +92,7 @@ public class MvcConfig extends WebMvcConfigurationSupport {
 
         if (StringUtils.isNotBlank(staticResourceProperties.getFileDir())) {
             registry.addResourceHandler("/" + staticResourceProperties.getFileSite() + "/**").addResourceLocations(staticResourceProperties.getFileDir() + "/" + staticResourceProperties.getFileSite() + "/");
-            log.info("静态文件映射 /" + staticResourceProperties.getFileSite() + "/**  -->" + staticResourceProperties.getFileDir() + "/" + staticResourceProperties.getFileSite() + "/");
+            log.info("静态文件映射 /" + staticResourceProperties.getFileSite() + "/**  -->" + staticResourceProperties.getFileDir() + staticResourceProperties.getFileSite() + "/");
         }
         super.addResourceHandlers(registry);
     }
