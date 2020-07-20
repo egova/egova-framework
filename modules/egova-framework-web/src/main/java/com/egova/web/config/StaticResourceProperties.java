@@ -13,7 +13,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class StaticResourceProperties {
 
 
-    private String fileDir = "/egova-apps";
+    private String fileDir = "/egova-apps/";
 
 
     private String fileSite = "files";
