@@ -3,6 +3,7 @@ package com.egova.cloud.oauth2;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -23,8 +24,8 @@ public class RemoteTokenServicesAutoConfiguration implements ApplicationListener
 
     private final RestTemplate restTemplate;
 
-    public RemoteTokenServicesAutoConfiguration(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public RemoteTokenServicesAutoConfiguration(@Qualifier("loadBalancedRestTemplate") RestTemplate loadBalancedRestTemplate) {
+        this.restTemplate = loadBalancedRestTemplate;
     }
 
     @Override

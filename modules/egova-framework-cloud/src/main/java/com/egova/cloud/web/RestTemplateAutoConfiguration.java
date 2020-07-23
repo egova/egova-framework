@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 /**
  * RestTemplate增加LoadBalancer能力
@@ -31,9 +32,9 @@ public class RestTemplateAutoConfiguration {
         this.client = client;
     }
 
-    @Bean
+    @Bean("loadBalancedRestTemplate")
     @LoadBalanced
-    public RestTemplate restTemplate() {
+    public RestTemplate loadBalancedRestTemplate() {
         RestTemplate restTemplate = new RestTemplate();
         // 设置UTF-8
         restTemplate.getMessageConverters().add(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
