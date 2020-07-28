@@ -34,6 +34,8 @@ public class ObjectMappingCustomer extends ObjectMapper {
      * 构造函数
      *
      * @param enableAssociative 是否启用联想注解
+     * @param differenceEnum    对于简单类型是否区分枚举，若为true将取name值，否则为value值
+     *
      */
     public ObjectMappingCustomer(boolean enableAssociative, boolean differenceEnum) {
         super();
