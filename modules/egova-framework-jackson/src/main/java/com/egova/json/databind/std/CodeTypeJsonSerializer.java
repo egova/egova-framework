@@ -12,9 +12,19 @@ import java.io.IOException;
  * 枚举序列化
  */
 public class CodeTypeJsonSerializer extends JsonSerializer<CodeType> {
+    private boolean differenceEnum = true;
+
+    public CodeTypeJsonSerializer(boolean differenceEnum) {
+        this.differenceEnum = differenceEnum;
+    }
+
+    public CodeTypeJsonSerializer() {
+
+    }
+
     @Override
     public void serialize(CodeType value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        if (Enum.class.isAssignableFrom(value.getClass())) {
+        if (differenceEnum && Enum.class.isAssignableFrom(value.getClass())) {
             Enum e = (Enum) value;
             gen.writeString(e.name());
         } else {

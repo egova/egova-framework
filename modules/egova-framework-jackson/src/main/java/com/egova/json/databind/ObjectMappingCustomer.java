@@ -28,12 +28,14 @@ public class ObjectMappingCustomer extends ObjectMapper {
     private static final long serialVersionUID = 1572846160494272924L;
 
 
+
+
     /**
      * 构造函数
      *
      * @param enableAssociative 是否启用联想注解
      */
-    public ObjectMappingCustomer(boolean enableAssociative) {
+    public ObjectMappingCustomer(boolean enableAssociative, boolean differenceEnum) {
         super();
         // 允许单引号
         this.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
@@ -51,58 +53,81 @@ public class ObjectMappingCustomer extends ObjectMapper {
         // 设置日期格式
         this.setDateFormat(new CustomDateFormat());
 
-        SimpleModule module = new SimpleModule();
-
-        module.setDeserializers(new CustomSimpleDeserializers());
-
-
-        // 定义BaseEntity类型序列化规则
-        module.setSerializerModifier(new BeanSerializerModifier() {
-
-            @Override
-            public JsonSerializer<?> modifySerializer(SerializationConfig config, BeanDescription beanDesc,
-                                                      JsonSerializer<?> serializer) {
-
-                if (ExtensibleObject.class.isAssignableFrom(beanDesc.getBeanClass())) {
-                    return new ExtensibleObjectSerializer((BeanSerializerBase) serializer, enableAssociative);
-                } else if (CodeType.class.isAssignableFrom(beanDesc.getBeanClass())) {
-                    return new CodeTypeJsonSerializer();
-                }
-                return serializer;
-            }
-        });
-
-
-        // 定义Boolean类型反序列化规则
-        module.setDeserializerModifier(new BeanDeserializerModifier() {
-
-            @Override
-            public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription beanDesc,
-                                                          JsonDeserializer<?> deserializer) {
-                if (beanDesc.getBeanClass() == Boolean.class) {
-                    return new BooleanJsonDeserializer(true);
-                } else if (beanDesc.getBeanClass() == boolean.class) {
-                    return new BooleanJsonDeserializer(false);
-                } else if (beanDesc.getBeanClass() == java.util.Date.class) {
-                    return new CustomDateDeseralizer();
-                } else if (beanDesc.getBeanClass() == java.sql.Timestamp.class) {
-                    return new CustomTimestampDeseralizer();
-                } else if (CodeType.class.isAssignableFrom(beanDesc.getBeanClass())) {
-                    return new CodeTypeJsonDeserializer(beanDesc.getBeanClass());
-                } else if (ExtensibleObject.class.isAssignableFrom(beanDesc.getBeanClass())) {
-                    return new ExtensibleObjectDeserializer((BeanDeserializerBase) deserializer);
-                } else {
-                    return deserializer;
-                }
-            }
-
-        });
-
+        SimpleModule module = getDefaultSimpleModule(enableAssociative, differenceEnum);
         this.registerModule(module);
 
         // 解决 jackson2 无法反序列化 LocalDateTime 的问题
         this.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         this.registerModule(new JavaTimeModule());
         this.registerModule(new Jdk8Module());
+    }
+
+    public ObjectMappingCustomer(boolean enableAssociative){
+        this(enableAssociative,true);
+    }
+
+    public static class DefaultBeanSerializerModifier extends BeanSerializerModifier {
+
+        private boolean enableAssociative;
+
+        private boolean differenceEnum;
+
+        public DefaultBeanSerializerModifier(boolean enableAssociative, boolean differenceEnum) {
+            this.enableAssociative = enableAssociative;
+            this.differenceEnum = differenceEnum;
+        }
+
+        @Override
+        public JsonSerializer<?> modifySerializer(SerializationConfig config, BeanDescription beanDesc,
+                                                  JsonSerializer<?> serializer) {
+
+            if (ExtensibleObject.class.isAssignableFrom(beanDesc.getBeanClass())) {
+                return new ExtensibleObjectSerializer((BeanSerializerBase) serializer, enableAssociative);
+            } else if (CodeType.class.isAssignableFrom(beanDesc.getBeanClass())) {
+                return new CodeTypeJsonSerializer(this.differenceEnum);
+            }
+            return serializer;
+        }
+    }
+
+    public static class DefaultBeanDeserializerModifier extends BeanDeserializerModifier {
+
+
+        @Override
+        public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription beanDesc,
+                                                      JsonDeserializer<?> deserializer) {
+            if (beanDesc.getBeanClass() == Boolean.class) {
+                return new BooleanJsonDeserializer(true);
+            } else if (beanDesc.getBeanClass() == boolean.class) {
+                return new BooleanJsonDeserializer(false);
+            } else if (beanDesc.getBeanClass() == java.util.Date.class) {
+                return new CustomDateDeseralizer();
+            } else if (beanDesc.getBeanClass() == java.sql.Timestamp.class) {
+                return new CustomTimestampDeseralizer();
+            } else if (CodeType.class.isAssignableFrom(beanDesc.getBeanClass())) {
+                return new CodeTypeJsonDeserializer(beanDesc.getBeanClass());
+            } else if (ExtensibleObject.class.isAssignableFrom(beanDesc.getBeanClass())) {
+                return new ExtensibleObjectDeserializer((BeanDeserializerBase) deserializer);
+            } else {
+                return deserializer;
+            }
+        }
+    }
+
+
+    public SimpleModule getDefaultSimpleModule(boolean enableAssociative, boolean differenceEnum) {
+        SimpleModule module = new SimpleModule("egova-module");
+
+        module.setDeserializers(new CustomSimpleDeserializers());
+
+
+        // 定义BaseEntity类型序列化规则
+        module.setSerializerModifier(new DefaultBeanSerializerModifier(enableAssociative, differenceEnum));
+
+
+        // 定义Boolean类型反序列化规则
+        module.setDeserializerModifier(new DefaultBeanDeserializerModifier());
+        return module;
+
     }
 }
