@@ -91,12 +91,12 @@
         <repository>
             <id>egova-nexus-releases</id>
             <name>Nexus Release Repository</name>
-            <url>http://120.202.26.100:2981/repository/maven-releases</url>
+            <url>http://www.egova.top:2981/repository/maven-releases</url>
         </repository>
         <snapshotRepository>
             <id>egova-nexus-snapshots</id>
             <name>Nexus Snapshot Repository</name>
-            <url>http://120.202.26.100:2981/repository/maven-snapshots</url>
+            <url>http://www.egova.top:2981/repository/maven-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
