@@ -107,7 +107,7 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
             defaultTokenServices.setClientDetailsService(clientDetailsService);
             defaultTokenServices.setTokenEnhancer(tokenEnhancer());
             defaultTokenServices.setAccessTokenValiditySeconds(authenticationProperties.getAccessTokenValiditySeconds());
-            defaultTokenServices.setRefreshTokenValiditySeconds(authenticationProperties.getAccessTokenValiditySeconds());
+            defaultTokenServices.setRefreshTokenValiditySeconds(authenticationProperties.getRefreshTokenValiditySeconds());
 
             // 刷新token支持是由ClientDetails里面的grant_type来决定的
             defaultTokenServices.setSupportRefreshToken(authenticationProperties.isSupportRefreshToken());
