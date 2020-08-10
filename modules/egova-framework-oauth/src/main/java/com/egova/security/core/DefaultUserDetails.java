@@ -15,6 +15,8 @@ public class DefaultUserDetails extends org.springframework.security.core.userde
 
     private String id;
 
+    private String personId;
+
     public String getId() {
         return id;
     }
@@ -29,6 +31,15 @@ public class DefaultUserDetails extends org.springframework.security.core.userde
 
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
+    }
+
+
+    public String getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(String personId) {
+        this.personId = personId;
     }
 
     public DefaultUserDetails(String tenantId, String userId, String username, String password, Collection<? extends GrantedAuthority> authorities) {
