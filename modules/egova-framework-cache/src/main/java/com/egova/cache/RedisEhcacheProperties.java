@@ -71,9 +71,9 @@ public class RedisEhcacheProperties {
 
 
         /**
-         * 写入后过期时间，单位毫秒
+         * 写入后过期时间，单位毫秒。默认5分钟
          */
-        private long expireAfterWrite=60000;
+        private long expireAfterWrite = 5 * 60 * 1000;
 
 
         /**
