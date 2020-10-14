@@ -15,6 +15,8 @@ public class DefaultUserDetails extends org.springframework.security.core.userde
 
     private String id;
 
+    private String personId;
+
     public String getId() {
         return id;
     }
@@ -31,15 +33,17 @@ public class DefaultUserDetails extends org.springframework.security.core.userde
         this.tenantId = tenantId;
     }
 
-    public DefaultUserDetails(String tenantId, String userId, String username, String password, Collection<? extends GrantedAuthority> authorities) {
+    public DefaultUserDetails(String tenantId, String userId, String personId, String username, String password, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
         this.id = userId;
         this.tenantId = tenantId;
+        this.personId = personId;
     }
 
-    public DefaultUserDetails(String tenantId, String userId, String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+    public DefaultUserDetails(String tenantId, String userId, String personId, String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
         this.id = userId;
         this.tenantId = tenantId;
+        this.personId = personId;
     }
 }
