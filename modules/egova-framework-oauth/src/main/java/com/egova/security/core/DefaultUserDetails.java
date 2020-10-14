@@ -33,6 +33,14 @@ public class DefaultUserDetails extends org.springframework.security.core.userde
         this.tenantId = tenantId;
     }
 
+    public String getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(String personId) {
+        this.personId = personId;
+    }
+
     public DefaultUserDetails(String tenantId, String userId, String personId, String username, String password, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
         this.id = userId;
