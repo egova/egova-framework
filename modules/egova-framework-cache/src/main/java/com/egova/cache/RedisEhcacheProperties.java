@@ -40,9 +40,9 @@ public class RedisEhcacheProperties {
     public class Redis {
 
         /**
-         * 全局过期时间，单位毫秒，默认不过期
+         * 全局过期时间，单位秒。默认5分钟
          */
-        private Duration defaultExpiration = Duration.ofSeconds(0);
+        private Duration defaultExpiration = Duration.ofSeconds(5 * 60);
 
         /**
          * 每个cacheName的过期时间，单位毫秒，优先级比defaultExpiration高
