@@ -61,7 +61,7 @@ public class RedisEhcacheCacheManager implements CacheManager {
         this.configuration =
                 CacheConfigurationBuilder
                         .newCacheConfigurationBuilder(Object.class, Object.class, ResourcePoolsBuilder.heap(redisEhcacheProperties.getEhcache().getMaxEntry()))
-                        .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(ehcacheExpire)))
+                        .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofMillis(ehcacheExpire)))
                         .build();
         this.ehCacheManager = CacheManagerBuilder
                 .newCacheManagerBuilder()
@@ -96,8 +96,8 @@ public class RedisEhcacheCacheManager implements CacheManager {
 
     private org.ehcache.Cache<Object, Object> getEhcache(String name) {
 
+        lock.lock();
         try {
-            lock.lock();
             org.ehcache.Cache<Object, Object> res = ehCacheManager.getCache(name, Object.class, Object.class);
             if (res != null) {
                 return res;

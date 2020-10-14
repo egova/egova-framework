@@ -36,7 +36,7 @@ public class RedisEhcacheCache extends AbstractValueAdaptingCache {
 
     private CacheType cacheType;
 
-    private Duration defaultExpiration = Duration.ofSeconds(0);
+    private Duration defaultExpiration = Duration.ofSeconds(5 * 60);
 
     private Map<String, Duration> expires;
 
@@ -94,8 +94,8 @@ public class RedisEhcacheCache extends AbstractValueAdaptingCache {
         }
 
         ReentrantLock lock = new ReentrantLock();
+        lock.lock();
         try {
-            lock.lock();
             value = lookup(key);
             if (value != null) {
                 return (T) value;
@@ -138,7 +138,7 @@ public class RedisEhcacheCache extends AbstractValueAdaptingCache {
                 if (expire.toMillis() > 0) {
                     redisTemplate.opsForValue().set(getKey(key), toStoreValue(value), expire.toMillis(), TimeUnit.MILLISECONDS);
                 } else {
-                    redisTemplate.opsForValue().set(getKey(key), toStoreValue(value));
+                    redisTemplate.opsForValue().set(getKey(key), toStoreValue(value), defaultExpiration.toMillis(), TimeUnit.MILLISECONDS);
                 }
             } catch (Exception ex) {
                 if (this.cacheType == CacheType.redis) {
@@ -207,7 +207,7 @@ public class RedisEhcacheCache extends AbstractValueAdaptingCache {
                         if (expire.toMillis() > 0) {
                             redisTemplate.opsForValue().setIfAbsent(getKey(key), toStoreValue(value), expire.toMillis(), TimeUnit.MILLISECONDS);
                         } else {
-                            redisTemplate.opsForValue().setIfAbsent(getKey(key), toStoreValue(value));
+                            redisTemplate.opsForValue().setIfAbsent(getKey(key), toStoreValue(value), defaultExpiration.toMillis(), TimeUnit.MILLISECONDS);
                         }
                         isAbsent = true;
                     }

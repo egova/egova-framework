@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 
 /**
@@ -22,6 +23,7 @@ import org.springframework.core.annotation.Order;
  * @author 奔波儿灞
  * @since 1.0
  */
+@Profile("!test")
 @EnableConfigurationProperties(MinioProperties.class)
 public class MinioAutoConfiguration {
 

@@ -1,8 +1,6 @@
 package com.egova.web.rest;
 
 import com.egova.exception.ApiException;
-import com.egova.web.rest.ResponseResult;
-import com.egova.web.rest.ResponseResults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataAccessException;
@@ -24,7 +22,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ApiException.class)
     public ResponseResult<Void> handleApiException(ApiException e) {
         String msg = e.getMessage();
-        log.warn("handle ApiException: {}", msg);
+        // 打印cause
+        if (e.getCause() == null) {
+            log.warn("handle ApiException: {}", msg);
+        } else {
+            log.warn("handle ApiException: {}, cause: {}", msg, e.getCause().getMessage());
+        }
         return ResponseResults.error(msg);
     }
 
