@@ -31,13 +31,14 @@ public class CustomUserAuthenticationConverter extends DefaultUserAuthentication
                         Map userDetails = (Map) principal;
                         String tenantId = (String) userDetails.get("tenantId");
                         String userId = (String) userDetails.get("id");
+                        String personId = (String) userDetails.get("personId");
                         String username = (String) userDetails.get("username");
                         Boolean enabled = (Boolean) userDetails.get("enabled");
                         Boolean accountNonExpired = (Boolean) userDetails.get("accountNonExpired");
                         Boolean credentialsNonExpired = (Boolean) userDetails.get("credentialsNonExpired");
                         Boolean accountNonLocked = (Boolean) userDetails.get("accountNonLocked");
                         principal = new DefaultUserDetails(
-                                tenantId, userId, username, "N/A",
+                                tenantId, userId, personId, username, "N/A",
                                 enabled, accountNonExpired, credentialsNonExpired, accountNonLocked,
                                 authorities
                         );
