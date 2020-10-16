@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
          <parent>
             <groupId>com.egova</groupId>
             <artifactId>egova-framework</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
              <relativePath>../../</relativePath>
         </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>egova-framework-cloud</artifactId>
     <name>egova-framework-cloud</name>
-    <version>${egova.snapshot.version}</version>
+    <version>1.0.0</version>
 
     <properties>
         <spring.boot.version>2.1.0.RELEASE</spring.boot.version>
@@ -25,13 +23,13 @@
         <dependency>
             <groupId>com.egova</groupId>
             <artifactId>egova-framework-base</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>com.egova</groupId>
             <artifactId>egova-framework-jackson</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -86,7 +84,7 @@
         <dependency>
             <groupId>com.egova</groupId>
             <artifactId>egova-framework-oauth</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security.oauth.boot</groupId>
@@ -118,7 +116,7 @@
             <dependency>
                 <groupId>com.egova</groupId>
                 <artifactId>egova-framework-dependencies</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>1.0.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
