@@ -3,13 +3,13 @@
          <parent>
             <groupId>com.egova</groupId>
             <artifactId>egova-framework</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
              <relativePath>../../</relativePath>
         </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>egova-framework-dependencies</artifactId>
     <name>egova-framework-dependencies</name>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
 
     <properties>

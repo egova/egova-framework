@@ -3,13 +3,13 @@
          <parent>
             <groupId>com.egova</groupId>
             <artifactId>egova-framework</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
              <relativePath>../../</relativePath>
         </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>egova-framework-cloud</artifactId>
     <name>egova-framework-cloud</name>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <properties>
         <spring.boot.version>2.1.0.RELEASE</spring.boot.version>
@@ -23,13 +23,13 @@
         <dependency>
             <groupId>com.egova</groupId>
             <artifactId>egova-framework-base</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>com.egova</groupId>
             <artifactId>egova-framework-jackson</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -84,7 +84,7 @@
         <dependency>
             <groupId>com.egova</groupId>
             <artifactId>egova-framework-oauth</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security.oauth.boot</groupId>
@@ -116,7 +116,7 @@
             <dependency>
                 <groupId>com.egova</groupId>
                 <artifactId>egova-framework-dependencies</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.1-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

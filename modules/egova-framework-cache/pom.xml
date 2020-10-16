@@ -3,26 +3,26 @@
     <parent>
         <groupId>com.egova</groupId>
         <artifactId>egova-framework</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
         <relativePath>../../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>egova-framework-cache</artifactId>
     <name>egova-framework-cache</name>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
 
     <dependencies>
         <dependency>
             <groupId>com.egova</groupId>
             <artifactId>egova-framework-base</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>com.egova</groupId>
             <artifactId>egova-framework-jackson</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
@@ -85,7 +85,7 @@
             <dependency>
                 <groupId>com.egova</groupId>
                 <artifactId>egova-framework-dependencies</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.1-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
