@@ -35,6 +35,22 @@
         </dependency>
     </dependencies>
 
+
+    <scm>
+        <tag>master</tag>
+        <url>https://github.com/egova/egova-framework.git</url>
+        <connection>scm:git:https://github.com/egova/egova-framework.git</connection>
+        <developerConnection>scm:git:https://github.com/egova/egova-framework.git</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>chendb</name>
+            <email>hbchendb1985@hotmail.com</email>
+            <organization>egova</organization>
+        </developer>
+    </developers>
+
     <build>
         <finalName>${project.artifactId}</finalName>
         <pluginManagement>
