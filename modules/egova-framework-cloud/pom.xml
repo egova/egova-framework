@@ -2,36 +2,32 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-         <parent>
-            <groupId>com.egova</groupId>
-            <artifactId>egova-framework</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-             <relativePath>../../</relativePath>
-        </parent>
+    <parent>
+        <groupId>com.egova</groupId>
+        <artifactId>egova-framework</artifactId>
+        <version>1.0.1-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>egova-framework-cloud</artifactId>
     <name>egova-framework-cloud</name>
-    <version>${egova.snapshot.version}</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <properties>
-        <spring.boot.version>2.1.0.RELEASE</spring.boot.version>
-        <spring.cloud.version>2.1.0.RELEASE</spring.cloud.version>
         <feign.version>10.1.0</feign.version>
     </properties>
 
     <dependencies>
-
-
         <dependency>
             <groupId>com.egova</groupId>
             <artifactId>egova-framework-base</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.egova</groupId>
             <artifactId>egova-framework-jackson</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -48,7 +44,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-            <version>${spring.cloud.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.sun.jersey</groupId>
@@ -69,35 +64,33 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
-            <version>${spring.cloud.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-httpclient</artifactId>
-            <version>${feign.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
-            <version>${spring.cloud.version}</version>
+        </dependency>
+        <!-- feign.hystrix依赖 -->
+        <dependency>
+            <groupId>com.netflix.netflix-commons</groupId>
+            <artifactId>netflix-statistics</artifactId>
+            <version>0.3.0</version>
         </dependency>
 
         <!-- oauth2 -->
         <dependency>
             <groupId>com.egova</groupId>
             <artifactId>egova-framework-oauth</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security.oauth.boot</groupId>
             <artifactId>spring-security-oauth2-autoconfigure</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>13.0</version>
-            <scope>compile</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
@@ -110,7 +103,6 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
-        
     </dependencies>
 
     <dependencyManagement>
@@ -118,19 +110,19 @@
             <dependency>
                 <groupId>com.egova</groupId>
                 <artifactId>egova-framework-dependencies</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
+
     <!-- maven-release-plugin插件配置 -->
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.3</version>
             </plugin>
         </plugins>
     </build>
