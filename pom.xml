@@ -9,9 +9,9 @@
     <name>egova-framework</name>
 
     <properties>
-        <project.snapshot.version>1.0.0-SNAPSHOT</project.snapshot.version>
-        <egova.snapshot.version>1.0.0-SNAPSHOT</egova.snapshot.version>
-        <egova.publish.version>1.0.0</egova.publish.version>
+        <project.snapshot.version>1.0.1-SNAPSHOT</project.snapshot.version>
+        <egova.snapshot.version>1.0.1-SNAPSHOT</egova.snapshot.version>
+        <egova.publish.version>1.0.1</egova.publish.version>
         <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
         <jdk.version>1.8</jdk.version>
     </properties>
@@ -100,6 +100,18 @@
 <!--		</repository>-->
 <!--	</distributionManagement>-->
 
+    <repositories>
+        <repository>
+            <id>egova-nexus-releases</id>
+            <name>Nexus Release Repository</name>
+            <url>http://www.egova.top:2981/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>spring</id>
+            <name>spring</name>
+            <url>https://repo.spring.io/release/</url>
+        </repository>
+    </repositories>
 
     <distributionManagement>
         <repository>

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
          <parent>
             <groupId>com.egova</groupId>
             <artifactId>egova-framework</artifactId>
             <version>1.0.1-SNAPSHOT</version>
-             <relativePath>../../</relativePath>
+             <relativePath>../../pom.xml</relativePath>
         </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>egova-framework-oauth</artifactId>
@@ -33,13 +35,13 @@
         <dependency>
             <groupId>com.egova</groupId>
             <artifactId>egova-framework-redis</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.egova</groupId>
             <artifactId>egova-framework-base</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -73,13 +75,6 @@
             <version>13.0</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>13.0</version>
-            <scope>compile</scope>
-        </dependency>
-
     </dependencies>
 
 
@@ -88,7 +83,7 @@
             <dependency>
                 <groupId>com.egova</groupId>
                 <artifactId>egova-framework-dependencies</artifactId>
-                <version>1.0.1-SNAPSHOT</version>
+                <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

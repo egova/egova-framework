@@ -22,8 +22,8 @@ public class ResponseResultAdvice implements ResponseBodyAdvice<Object> {
     @Override
     @SuppressWarnings("NullableProblems")
     public boolean supports(MethodParameter methodParameter, Class<? extends HttpMessageConverter<?>> aClass) {
-        // 方法增加了@Api注解才包装返回值
-        return methodParameter.getMethodAnnotation(Api.class) != null;
+        // controller类增加了@Api注解或者方法增加了@Api注解才包装返回值
+        return methodParameter.getDeclaringClass().isAnnotationPresent(Api.class) || methodParameter.getMethodAnnotation(Api.class) != null;
     }
 
     @Override
