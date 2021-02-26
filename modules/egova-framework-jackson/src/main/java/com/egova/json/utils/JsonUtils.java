@@ -60,7 +60,7 @@ public class JsonUtils {
 	 */
 	public static <T> T deserializeByType(String json, TypeReference type) {
 		try {
-			T d = enableAssociativeObjectMapping().readValue(json, type);
+			T d = (T) enableAssociativeObjectMapping().readValue(json, type);
 			return d;
 		} catch (Exception e) {
 			throw new FrameworkException(type + "类型对象解析出错", e);
