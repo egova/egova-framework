@@ -8,7 +8,7 @@ import java.lang.annotation.*;
  * @author 奔波儿灞
  * @since 1.0
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD,ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
