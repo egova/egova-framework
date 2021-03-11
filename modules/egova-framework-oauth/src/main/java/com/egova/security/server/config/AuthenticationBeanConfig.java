@@ -46,9 +46,10 @@ public class AuthenticationBeanConfig {
      * @date 2016年12月8日 下午5:47:12
      */
     @Bean
+    @ConditionalOnMissingBean(TokenStore.class)
     public TokenStore tokenStore(RedisConnectionFactory connectionFactory) {
         RedisOauthTokenStore store = new RedisOauthTokenStore(connectionFactory);
-        store.setPrefix("security:security:");
+        store.setPrefix("egova:security:");
         return store;
     }
 

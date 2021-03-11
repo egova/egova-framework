@@ -1,8 +1,10 @@
 package com.egova.security.server.config;
 
+import com.egova.security.core.TokenGranterWrapper;
 import com.egova.security.core.authentication.DefaultClientDetailsService;
 import com.egova.security.core.properties.AuthenticationProperties;
 import com.egova.security.core.properties.SecurityProperties;
+import com.egova.security.core.provider.TokenGranterProvider;
 import com.egova.security.server.jdbc.JdbcOauthClientDetailsService;
 import com.egova.security.server.jdbc.JdbcOauthTokenServices;
 import com.egova.security.server.jdbc.JdbcOauthTokenStore;
@@ -25,6 +27,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.approval.ApprovalStore;
 import org.springframework.security.oauth2.provider.approval.TokenApprovalStore;
 import org.springframework.security.oauth2.provider.approval.UserApprovalHandler;
@@ -37,6 +40,10 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @EnableConfigurationProperties(SecurityProperties.class)
@@ -93,6 +100,9 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
 
         @Autowired
         private TokenStore tokenStore;
+
+        @Autowired(required = false)
+        private List<TokenGranterProvider> tokenGranterProviders;
 
 
         @Bean
@@ -167,7 +177,11 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
          */
         @Override
         public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-
+            TokenGranter tokenGranter = endpoints.getTokenGranter();
+            if (!(tokenGranter instanceof TokenGranterWrapper)) {
+                TokenGranterWrapper tokenGranterWrapper = new TokenGranterWrapper(authenticationManager, tokenGranterProviders, endpoints);
+                endpoints.tokenGranter(tokenGranterWrapper);
+            }
             endpoints.setClientDetailsService(clientDetailsService);
             endpoints.allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST)
                     // 若不设置此项，在sso client进行token检测时会找不到token(因为它采用的InMemoeryTokenServices)
@@ -177,21 +191,29 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
 
         }
 
+        private String[] grantTypes() {
+            List<String> grantTypes = new ArrayList<>(Arrays.asList(new String[]{"password", "authorization_code", "refresh_token", "client_credentials"}));
+            grantTypes.addAll(tokenGranterProviders.stream().map(s -> s.name()).collect(Collectors.toList()));
+            return grantTypes.toArray(new String[grantTypes.size()]);
+        }
 
         /**
          * ClientDetailsServiceConfigurer配置入口
          */
         @Override
         public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+            List<String> grantTypes = new ArrayList<>(Arrays.asList(new String[]{"password", "authorization_code", "refresh_token", "client_credentials"}));
+            grantTypes.addAll(tokenGranterProviders.stream().map(s -> s.name()).collect(Collectors.toList()));
+
             clients.inMemory()
                     .withClient("unity-client")
                     .secret(passwordEncoder.encode("unity"))
-                    .authorizedGrantTypes("password", "authorization_code", "refresh_token", "client_credentials", "social", "pki","sms")
+                    .authorizedGrantTypes(this.grantTypes())
                     .authorities("ROLE_CLIENT")
                     .scopes("read", "write")
                     .and().withClient("mobile-client")
                     .secret(passwordEncoder.encode("mobile"))
-                    .authorizedGrantTypes("password", "authorization_code", "refresh_token", "client_credentials", "social", "pki","sms")
+                    .authorizedGrantTypes("password", "authorization_code", "refresh_token", "client_credentials", "social", "pki", "sms")
                     .authorities("ROLE_CLIENT")
                     .scopes("read", "write");
         }
@@ -243,6 +265,10 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
 
         @Autowired
         private DataSource dataSource;
+
+
+        @Autowired(required = false)
+        private List<TokenGranterProvider> tokenGranterProviders;
 
 
         /**
@@ -318,6 +344,13 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
                     .tokenServices(tokenServices()).userApprovalHandler(userApprovalHandler());
         }
 
+
+        private String[] grantTypes() {
+            List<String> grantTypes = new ArrayList<>(Arrays.asList(new String[]{"password", "authorization_code", "refresh_token", "client_credentials"}));
+            grantTypes.addAll(tokenGranterProviders.stream().map(s -> s.name()).collect(Collectors.toList()));
+            return grantTypes.toArray(new String[grantTypes.size()]);
+        }
+
         /**
          * ClientDetailsServiceConfigurer配置入口
          */
@@ -325,7 +358,7 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
         public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
             clients.withClientDetails(clientDetailsService);
 
-            clients.inMemory().withClient("unity-client").secret(passwordEncoder.encode("unity")).authorizedGrantTypes("password", "authorization_code", "refresh_token", "client_credentials", "social", "pki").authorities("ROLE_CLIENT").scopes("read,write").and().withClient("mobile-client").secret(passwordEncoder.encode("mobile")).authorizedGrantTypes("password", "authorization_code", "refresh_token", "client_credentials", "social", "pki").authorities("ROLE_CLIENT").scopes("read,write");
+            clients.inMemory().withClient("unity-client").secret(passwordEncoder.encode("unity")).authorizedGrantTypes(this.grantTypes()).authorities("ROLE_CLIENT").scopes("read,write").and().withClient("mobile-client").secret(passwordEncoder.encode("mobile")).authorizedGrantTypes("password", "authorization_code", "refresh_token", "client_credentials", "social", "pki").authorities("ROLE_CLIENT").scopes("read,write");
         }
 
 
