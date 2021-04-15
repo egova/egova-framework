@@ -193,7 +193,9 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
 
         private String[] grantTypes() {
             List<String> grantTypes = new ArrayList<>(Arrays.asList(new String[]{"password", "authorization_code", "refresh_token", "client_credentials"}));
-            grantTypes.addAll(tokenGranterProviders.stream().map(s -> s.name()).collect(Collectors.toList()));
+            if (tokenGranterProviders != null) {
+                grantTypes.addAll(tokenGranterProviders.stream().map(s -> s.name()).collect(Collectors.toList()));
+            }
             return grantTypes.toArray(new String[grantTypes.size()]);
         }
 
@@ -203,7 +205,9 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
         @Override
         public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
             List<String> grantTypes = new ArrayList<>(Arrays.asList(new String[]{"password", "authorization_code", "refresh_token", "client_credentials"}));
-            grantTypes.addAll(tokenGranterProviders.stream().map(s -> s.name()).collect(Collectors.toList()));
+            if (tokenGranterProviders != null) {
+                grantTypes.addAll(tokenGranterProviders.stream().map(s -> s.name()).collect(Collectors.toList()));
+            }
 
             clients.inMemory()
                     .withClient("unity-client")
@@ -347,7 +351,9 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
 
         private String[] grantTypes() {
             List<String> grantTypes = new ArrayList<>(Arrays.asList(new String[]{"password", "authorization_code", "refresh_token", "client_credentials"}));
-            grantTypes.addAll(tokenGranterProviders.stream().map(s -> s.name()).collect(Collectors.toList()));
+            if (tokenGranterProviders != null) {
+                grantTypes.addAll(tokenGranterProviders.stream().map(s -> s.name()).collect(Collectors.toList()));
+            }
             return grantTypes.toArray(new String[grantTypes.size()]);
         }
 
