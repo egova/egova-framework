@@ -177,17 +177,20 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
          */
         @Override
         public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-            TokenGranter tokenGranter = endpoints.getTokenGranter();
-            if (!(tokenGranter instanceof TokenGranterWrapper)) {
-                TokenGranterWrapper tokenGranterWrapper = new TokenGranterWrapper(authenticationManager, tokenGranterProviders, endpoints);
-                endpoints.tokenGranter(tokenGranterWrapper);
-            }
             endpoints.setClientDetailsService(clientDetailsService);
+
+
             endpoints.allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST)
                     // 若不设置此项，在sso client进行token检测时会找不到token(因为它采用的InMemoeryTokenServices)
                     .tokenServices(createTokenServices())
                     .userApprovalHandler(userApprovalHandler())
                     .authenticationManager(authenticationManager);
+
+            TokenGranter tokenGranter = endpoints.getTokenGranter();
+            if (!(tokenGranter instanceof TokenGranterWrapper)) {
+                TokenGranterWrapper tokenGranterWrapper = new TokenGranterWrapper(authenticationManager, tokenGranterProviders, endpoints);
+                endpoints.tokenGranter(tokenGranterWrapper);
+            }
 
         }
 
@@ -204,11 +207,6 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
          */
         @Override
         public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-            List<String> grantTypes = new ArrayList<>(Arrays.asList(new String[]{"password", "authorization_code", "refresh_token", "client_credentials"}));
-            if (tokenGranterProviders != null) {
-                grantTypes.addAll(tokenGranterProviders.stream().map(s -> s.name()).collect(Collectors.toList()));
-            }
-
             clients.inMemory()
                     .withClient("unity-client")
                     .secret(passwordEncoder.encode("unity"))
@@ -217,7 +215,7 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
                     .scopes("read", "write")
                     .and().withClient("mobile-client")
                     .secret(passwordEncoder.encode("mobile"))
-                    .authorizedGrantTypes("password", "authorization_code", "refresh_token", "client_credentials", "social", "pki", "sms")
+                    .authorizedGrantTypes(grantTypes())
                     .authorities("ROLE_CLIENT")
                     .scopes("read", "write");
         }
