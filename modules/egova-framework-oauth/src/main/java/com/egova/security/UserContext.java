@@ -21,15 +21,30 @@ public class UserContext {
     /**
      * 获取当前登陆的用户名
      *
-     * @return 当前登陆的用户信息，未认证则抛出异常
+     * @return 当前登陆的用户信息
      */
     public static String username() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+           //  throw ExceptionUtils.api("need authentication");
+            return null;
+        }
+        return authentication.getName();
+    }
+
+    /**
+     * 获取当前登陆的用户名
+     *
+     * @return 当前登陆的用户信息，未认证则抛出异常
+     */
+    public static String loginName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             throw ExceptionUtils.api("need authentication");
         }
         return authentication.getName();
     }
+
 
     /**
      * 当前登录用户租户信息

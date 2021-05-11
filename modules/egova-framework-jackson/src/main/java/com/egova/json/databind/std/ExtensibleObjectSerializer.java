@@ -162,10 +162,8 @@ public class ExtensibleObjectSerializer extends BeanSerializerBase {
                 gen.writeObjectField(key, extras.get(key));
             }
             // 移除掉extras中设置的联想属性，防止后续redis缓存序列化为fastjson时，导致autoType问题
-            // associativeNames.forEach(extras::remove);
-            if (!CollectionUtils.isEmpty(entity.getExtras())) {
-                entity.getExtras().clear();
-            }
+            associativeNames.forEach(entity.getExtras()::remove);
+
         }
 
         gen.writeEndObject();
