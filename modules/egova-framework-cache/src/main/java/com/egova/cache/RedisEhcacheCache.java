@@ -6,15 +6,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.ehcache.Cache;
 import org.springframework.cache.support.AbstractValueAdaptingCache;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.Map;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 @Slf4j
@@ -41,6 +47,22 @@ public class RedisEhcacheCache extends AbstractValueAdaptingCache {
     private Map<String, Duration> expires;
 
     private String topic = "cache:redis:ehcache:topic";
+
+    private CacheKeys cacheKeys;
+
+    public static class CacheKeys {
+        private Set<Object> keys;
+        private LocalDateTime expireTime;
+
+        public CacheKeys(Set<Object> keys ) {
+            this.keys = keys;
+            expireTime = LocalDateTime.now().minusMinutes(5);
+        }
+
+        private boolean expired() {
+            return LocalDateTime.now().isBefore(this.expireTime);
+        }
+    }
 
     protected RedisEhcacheCache(boolean allowNullValues) {
         super(allowNullValues);
@@ -135,11 +157,13 @@ public class RedisEhcacheCache extends AbstractValueAdaptingCache {
             log.info("redis缓存，key:{},value:{}", key, value);
 
             try {
+                Object cacheKey = getKey(key);
                 if (expire.toMillis() > 0) {
-                    redisTemplate.opsForValue().set(getKey(key), toStoreValue(value), expire.toMillis(), TimeUnit.MILLISECONDS);
+                    redisTemplate.opsForValue().set(cacheKey, toStoreValue(value), expire.toMillis(), TimeUnit.MILLISECONDS);
                 } else {
-                    redisTemplate.opsForValue().set(getKey(key), toStoreValue(value), defaultExpiration.toMillis(), TimeUnit.MILLISECONDS);
+                    redisTemplate.opsForValue().set(cacheKey, toStoreValue(value), defaultExpiration.toMillis(), TimeUnit.MILLISECONDS);
                 }
+                addCacheKey(cacheKey);
             } catch (Exception ex) {
                 if (this.cacheType == CacheType.redis) {
                     throw ex;
@@ -205,12 +229,13 @@ public class RedisEhcacheCache extends AbstractValueAdaptingCache {
                         log.info("插入redis库，key:{},value:{}", key, value);
 
                         if (expire.toMillis() > 0) {
-                            redisTemplate.opsForValue().setIfAbsent(getKey(key), toStoreValue(value), expire.toMillis(), TimeUnit.MILLISECONDS);
+                            redisTemplate.opsForValue().setIfAbsent(cacheKey, toStoreValue(value), expire.toMillis(), TimeUnit.MILLISECONDS);
                         } else {
-                            redisTemplate.opsForValue().setIfAbsent(getKey(key), toStoreValue(value), defaultExpiration.toMillis(), TimeUnit.MILLISECONDS);
+                            redisTemplate.opsForValue().setIfAbsent(cacheKey, toStoreValue(value), defaultExpiration.toMillis(), TimeUnit.MILLISECONDS);
                         }
                         isAbsent = true;
                     }
+                    this.addCacheKey(cacheKey);
                 } catch (Exception ex) {
                     if (this.cacheType == CacheType.redis) {
                         throw ex;
@@ -240,8 +265,10 @@ public class RedisEhcacheCache extends AbstractValueAdaptingCache {
         if (this.cacheType != CacheType.ehcache) {
             log.info("删除redis库，key:{}", key);
             try {
+                Object cacheKey = getKey(key);
                 // 先清除redis中缓存数据，然后清除ehcache中的缓存，避免短时间内如果先清除ehcache缓存后其他请求会再从redis里加载到ehcache中
-                redisTemplate.delete(getKey(key));
+                redisTemplate.delete(cacheKey);
+                this.delCacheKey(key);
             } catch (Exception ex) {
                 if (this.cacheType == CacheType.redis) {
                     throw ex;
@@ -258,17 +285,72 @@ public class RedisEhcacheCache extends AbstractValueAdaptingCache {
         }
     }
 
+    /**
+     * scan 实现
+     *
+     * @param pattern  表达式
+     * @param consumer 对迭代到的key进行操作
+     */
+    public void scan(String pattern, Consumer<byte[]> consumer) {
+        this.redisTemplate.execute((RedisConnection connection) -> {
+            try (Cursor<byte[]> cursor = connection.scan(ScanOptions.scanOptions().count(Long.MAX_VALUE).match(pattern).build())) {
+                cursor.forEachRemaining(consumer);
+                return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    /**
+     * 获取符合条件的key
+     *
+     * @return
+     */
+    public Set<Object> cacheKeys() {
+        if (this.cacheKeys == null || this.cacheKeys.expired()) {
+            synchronized (this) {
+                Set<Object> keys = new HashSet<>();
+                this.scan(this.name.concat(":*"), item -> {
+                    //符合条件的key
+                    String key = new String(item, StandardCharsets.UTF_8);
+                    keys.add(key);
+                });
+                this.cacheKeys = new CacheKeys(keys);
+            }
+        }
+        return cacheKeys.keys;
+    }
+
+    public void addCacheKey(Object cacheKey) {
+        this.cacheKeys().add(cacheKey);
+    }
+
+    public void delCacheKey(Object cacheKey) {
+        this.cacheKeys().remove(cacheKey);
+    }
+
+
+    public void clearCacheKeys() {
+        synchronized (this) {
+            this.cacheKeys = null;
+        }
+    }
+
     @Override
     public void clear() {
         if (this.cacheType != CacheType.ehcache) {
             try {
                 // 先清除redis中缓存数据，然后清除ehcache中的缓存，避免短时间内如果先清除ehcache缓存后其他请求会再从redis里加载到ehcache中
-                Set<Object> keys = redisTemplate.keys(this.name.concat(":*"));
-                if (keys != null) {
+                Set<Object> keys = this.cacheKeys();
+                if (keys != null && keys.size() > 0) {
                     for (Object key : keys) {
                         redisTemplate.delete(key);
                     }
+                    this.clearCacheKeys();
                 }
+
             } catch (Exception ex) {
                 if (this.cacheType == CacheType.redis) {
                     throw ex;
@@ -301,13 +383,13 @@ public class RedisEhcacheCache extends AbstractValueAdaptingCache {
             try {
                 value = redisTemplate.opsForValue().get(cacheKey);
                 if (value != null) {
+                    this.addCacheKey(cacheKey);
                     if (this.cacheType != CacheType.redis) {
                         // 将二级缓存重新复制到一级缓存。原理是最近访问的key很可能再次被访问
                         ehcacheCache.put(key, value);
                     }
                     return value;
                 }
-
             } catch (Exception ex) {
                 if (this.cacheType == CacheType.redis) {
                     throw ex;
@@ -368,9 +450,9 @@ public class RedisEhcacheCache extends AbstractValueAdaptingCache {
         if (value == null) {
             return true;
         }
-		if (value instanceof ResponseResult) {
-			return !((ResponseResult) value).getHasError();
-		}
+        if (value instanceof ResponseResult) {
+            return !((ResponseResult) value).getHasError();
+        }
         return true;
     }
 }
