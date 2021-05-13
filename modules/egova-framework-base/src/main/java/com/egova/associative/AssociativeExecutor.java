@@ -16,10 +16,7 @@ import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * json序列化联想动作执行器
@@ -78,8 +75,7 @@ public class AssociativeExecutor {
         }
     }
 
-    private static String setAssociativeField(Associative associative, ExtensibleObject obj, EntityField field) {
-
+    private static Map.Entry<String, Object> getAssociativeField(Associative associative, ExtensibleObject obj, EntityField field) {
 
         String newFieldName = StringUtils.isBlank(associative.name()) ? field.getName() + "Text" : associative.name();
         if (newFieldName.contains("%s")) {
@@ -113,12 +109,54 @@ public class AssociativeExecutor {
                 value = provider.associate(Arrays.asList(v, associative.extras()).toArray());
             }
             obj.set(newFieldName, value);
-            return newFieldName;
+            return new AbstractMap.SimpleEntry(newFieldName, value);
         } catch (Exception ex) {
             LOG.error(String.format("%s对象json 联想序列化%s字段时异常", obj.getClass().getSimpleName(), field.getName()), ex);
         }
         return null;
     }
+
+
+//    private static String setAssociativeField(Associative associative, ExtensibleObject obj, EntityField field) {
+//
+//        String newFieldName = StringUtils.isBlank(associative.name()) ? field.getName() + "Text" : associative.name();
+//        if (newFieldName.contains("%s")) {
+//            newFieldName = String.format(newFieldName, field.getName());
+//        }
+//        if (newFieldName.contains("${")) {
+//            newFieldName = newFieldName.replace("${", "#{");
+//        }
+//        if (newFieldName.contains("#{")) {
+//            newFieldName = getExpressionValue(newFieldName, obj, field);
+//        }
+//        if (obj.contains(newFieldName)) {
+//            return null;
+//        }
+//        AssociativeProvider provider = getProvider(associative);
+//        if (provider == null) {
+//            String message = String.format("没有找到字段%s上的联想注解的AssociativeProvider", getProviderName(associative));
+//            if (associative.required()) {
+//                throw ExceptionUtils.framework(message);
+//            }
+//            LOG.warn(message);
+//            return null;
+//        }
+//        try {
+//            Object v = field.getValue(obj, null);
+//            Object value;
+//
+//            if (org.apache.commons.lang3.StringUtils.isEmpty(associative.extras())) {
+//                value = provider.associate(v);
+//            } else {
+//                value = provider.associate(Arrays.asList(v, associative.extras()).toArray());
+//            }
+//            obj.set(newFieldName, value);
+//            return newFieldName;
+//        } catch (Exception ex) {
+//            LOG.error(String.format("%s对象json 联想序列化%s字段时异常", obj.getClass().getSimpleName(), field.getName()), ex);
+//        }
+//        return null;
+//    }
 
 
 //    public static Object getAssociativeValue(EntityField field, Object obj) {
@@ -146,18 +184,22 @@ public class AssociativeExecutor {
 //        return v;
 //    }
 
-    public static List<String> execute(ExtensibleObject obj) {
+    /**
+     * 获取扩展对象联想后的Map
+     *
+     * @param obj
+     * @return
+     */
+    public static Map<String, Object> getExtrasMap(ExtensibleObject obj) {
+        Map<String, Object> stringObjectMap = new HashMap<>(obj.getExtras());
         List<EntityField> fields = EntityTypeHolder.getFields(obj.getClass());
-        List<String> names = new ArrayList<>();
         for (EntityField field : fields) {
             try {
-                Set<Associative> associatives = EntityAnnotationUtils.getMergedRepeatableAnnotations(field, Associative.class);
-
-
-                for (Associative associative : associatives) {
-                    String name = setAssociativeField(associative, obj, field);
-                    if (name != null) {
-                        names.add(name);
+                Set<Associative> associativeSet = EntityAnnotationUtils.getMergedRepeatableAnnotations(field, Associative.class);
+                for (Associative associative : associativeSet) {
+                    Map.Entry<String, Object> kv = getAssociativeField(associative, obj, field);
+                    if (kv != null) {
+                        stringObjectMap.put(kv.getKey(), kv.getValue());
                     }
                 }
             } catch (Exception ex) {
@@ -166,6 +208,15 @@ public class AssociativeExecutor {
                 throw ExceptionUtils.framework(message, ex);
             }
         }
-        return names;
+        return stringObjectMap;
+    }
+
+
+    public static Set<String> execute(ExtensibleObject obj) {
+        Map<String, Object> extras = getExtrasMap(obj);
+        if (extras != null) {
+            extras.entrySet().forEach(kv -> obj.set(kv.getKey(), kv.getValue()));
+        }
+        return extras.keySet();
     }
 }

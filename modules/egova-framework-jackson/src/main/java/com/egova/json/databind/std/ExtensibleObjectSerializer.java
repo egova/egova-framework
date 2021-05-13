@@ -148,22 +148,13 @@ public class ExtensibleObjectSerializer extends BeanSerializerBase {
 
         ExtensibleObject entity = (ExtensibleObject) bean;
 
-        List<String> associativeNames = Collections.emptyList();
-        if (this.enableAssociative) {
-            // 检测联想属性配置并增加到扩展字段中
-            associativeNames = AssociativeExecutor.execute(entity);
-        }
-
+        Map<String, Object> extras = this.enableAssociative ? AssociativeExecutor.getExtrasMap(entity) : entity.getExtras();
 
         // 为null则序列化失败
-        if (!CollectionUtils.isEmpty(entity.getExtras())) {
-            Map<String, Object> extras = new HashMap<>(entity.getExtras());
+        if (!CollectionUtils.isEmpty(extras)) {
             for (String key : extras.keySet()) {
                 gen.writeObjectField(key, extras.get(key));
             }
-            // 移除掉extras中设置的联想属性，防止后续redis缓存序列化为fastjson时，导致autoType问题
-            associativeNames.forEach(entity.getExtras()::remove);
-
         }
 
         gen.writeEndObject();
