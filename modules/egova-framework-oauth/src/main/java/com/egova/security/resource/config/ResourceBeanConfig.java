@@ -1,5 +1,6 @@
 package com.egova.security.resource.config;
 
+import com.egova.security.core.DefaultTokenExtractor;
 import com.egova.security.core.crypto.NoneOrBCryptPasswordEncoder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +10,11 @@ import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHand
 //@Configuration
 public class ResourceBeanConfig
 {
+    @Bean
+    public DefaultTokenExtractor defaultTokenExtractor(){
+        return new DefaultTokenExtractor();
+    }
+
     /**
      * 默认密码处理器
      * @return

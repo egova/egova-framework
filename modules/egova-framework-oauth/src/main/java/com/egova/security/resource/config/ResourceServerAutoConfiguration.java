@@ -1,5 +1,6 @@
 package com.egova.security.resource.config;
 
+import com.egova.security.core.DefaultTokenExtractor;
 import com.egova.security.core.properties.SecurityProperties;
 import com.egova.security.utils.SecurityConfigurationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,9 @@ public class ResourceServerAutoConfiguration extends ResourceServerConfiguration
         @Autowired
         private SecurityProperties securityProperties;
 
+        @Autowired
+        private DefaultTokenExtractor defaultTokenExtractor;
+
         @Override
         public void configure(HttpSecurity http) throws Exception {
             // @formatter:off
@@ -71,6 +75,7 @@ public class ResourceServerAutoConfiguration extends ResourceServerConfiguration
 
         @Override
         public void configure(ResourceServerSecurityConfigurer resources) {
+            resources.tokenExtractor(defaultTokenExtractor);
             resources.resourceId("egova-resource");
         }
     }
@@ -87,6 +92,9 @@ public class ResourceServerAutoConfiguration extends ResourceServerConfiguration
         private SecurityProperties securityProperties;
 
         @Autowired
+        private DefaultTokenExtractor defaultTokenExtractor;
+
+        @Autowired
         private OAuth2AccessDeniedHandler oAuth2AccessDeniedHandler;
 
         @Override
@@ -101,6 +109,7 @@ public class ResourceServerAutoConfiguration extends ResourceServerConfiguration
 
         @Override
         public void configure(ResourceServerSecurityConfigurer resources) {
+            resources.tokenExtractor(defaultTokenExtractor);
             resources.resourceId("egova-resource");
         }
     }

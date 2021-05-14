@@ -194,6 +194,7 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
 
         }
 
+        @SuppressWarnings("Duplicates")
         private String[] grantTypes() {
             List<String> grantTypes = new ArrayList<>(Arrays.asList(new String[]{"password", "authorization_code", "refresh_token", "client_credentials"}));
             if (tokenGranterProviders != null) {
@@ -347,6 +348,7 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
         }
 
 
+        @SuppressWarnings("Duplicates")
         private String[] grantTypes() {
             List<String> grantTypes = new ArrayList<>(Arrays.asList(new String[]{"password", "authorization_code", "refresh_token", "client_credentials"}));
             if (tokenGranterProviders != null) {
