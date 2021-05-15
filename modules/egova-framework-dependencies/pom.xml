@@ -12,7 +12,6 @@
     <version>1.0.2</version>
 
     <properties>
-        <flagwind-core.version>2.0.0-SNAPSHOT</flagwind-core.version>
         <kafka.version>2.3.0</kafka.version>
         <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
         <jdk.version>1.8</jdk.version>
