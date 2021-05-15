@@ -36,7 +36,7 @@ public class MvcConfig extends WebMvcConfigurationSupport {
     private ObjectMapper objectMapper;
 
 
-    @Value("${root.dir:/egova-apps/")
+    @Value("${root.dir:/egova-apps/}")
     private String rootDir;
 
 

@@ -27,7 +27,7 @@ import org.springframework.core.annotation.Order;
 @EnableConfigurationProperties(MinioProperties.class)
 public class MinioAutoConfiguration {
 
-    @Value("${egova.upload.request-url:/files")
+    @Value("${egova.upload.request-url:/files}")
     private String requestUrl;
 
     @Bean
