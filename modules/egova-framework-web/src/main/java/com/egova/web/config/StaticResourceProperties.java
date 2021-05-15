@@ -8,6 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @description: web静态资源
  * @date 2020-04-18 14:26:38
  */
+@Deprecated
 @Data
 @ConfigurationProperties(prefix = "egova.web.static")
 public class StaticResourceProperties {

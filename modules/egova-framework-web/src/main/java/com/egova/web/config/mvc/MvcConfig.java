@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
@@ -28,14 +29,16 @@ import java.util.List;
 @EnableConfigurationProperties(StaticResourceProperties.class)
 public class MvcConfig extends WebMvcConfigurationSupport {
 
-    @Autowired
-    private StaticResourceProperties staticResourceProperties;
-
     @Autowired(required = false)
     private List<HandlerMethodInterceptor> handlerMethodInterceptors;
 
     @Autowired
     private ObjectMapper objectMapper;
+
+
+    @Value("${root.dir:/egova-apps/")
+    private String rootDir;
+
 
     @Override
     protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {
@@ -79,20 +82,25 @@ public class MvcConfig extends WebMvcConfigurationSupport {
 
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**").addResourceLocations("classpath:/resources/WEB-INF/","classpath:/WEB-INF/","classpath:/static/");
 
-        if (!staticResourceProperties.getFileDir().startsWith("file")) {
-            staticResourceProperties.setFileDir("file:" + staticResourceProperties.getFileDir());
+        String resourceDir = rootDir;
+
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/resources/WEB-INF/", "classpath:/WEB-INF/", "classpath:/static/");
+
+        if (!resourceDir.startsWith("file:")) {
+            resourceDir = "file:" + resourceDir;
         }
-        if (StringUtils.isNotBlank(staticResourceProperties.getFileDir())) {
-            log.info("静态文件映射 /***  -->" + staticResourceProperties.getFileDir() + "webApps/" + "  " + staticResourceProperties.getFileDir() + "webApps/root/");
-            registry.addResourceHandler("/**").addResourceLocations(staticResourceProperties.getFileDir() + "webApps/", staticResourceProperties.getFileDir() + "webApps/root/","classpath:/resources/WEB-INF/","classpath:/WEB-INF/", "classpath:/static/");
+        if (!resourceDir.endsWith("/")) {
+            resourceDir = resourceDir + "/";
         }
+        if (StringUtils.isNotBlank(resourceDir)) {
+            log.info("静态文件映射 /***  -->" + resourceDir + "webApps/" + "  " + resourceDir + "webApps/root/");
 
+            registry.addResourceHandler("/**").addResourceLocations(resourceDir + "webApps/",
+                    resourceDir + "webApps/root/", "classpath:/resources/WEB-INF/", "classpath:/WEB-INF/", "classpath:/static/");
 
-        if (StringUtils.isNotBlank(staticResourceProperties.getFileDir())) {
-            registry.addResourceHandler("/" + staticResourceProperties.getFileSite() + "/**").addResourceLocations(staticResourceProperties.getFileDir() + "/" + staticResourceProperties.getFileSite() + "/");
-            log.info("静态文件映射 /" + staticResourceProperties.getFileSite() + "/**  -->" + staticResourceProperties.getFileDir() + staticResourceProperties.getFileSite() + "/");
+            log.info("静态文件映射 /files/**  -->" + resourceDir + "files/");
+            registry.addResourceHandler("/files/**").addResourceLocations(resourceDir + "files/");
         }
         super.addResourceHandlers(registry);
     }
