@@ -9,9 +9,6 @@
     <name>egova-framework</name>
 
     <properties>
-        <project.snapshot.version>1.0.1-SNAPSHOT</project.snapshot.version>
-        <egova.snapshot.version>1.0.1-SNAPSHOT</egova.snapshot.version>
-        <egova.publish.version>1.0.1</egova.publish.version>
         <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
         <jdk.version>1.8</jdk.version>
     </properties>
