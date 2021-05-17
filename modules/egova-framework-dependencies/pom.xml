@@ -4,12 +4,12 @@
     <parent>
         <groupId>com.egova</groupId>
         <artifactId>egova-framework</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.2-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>egova-framework-dependencies</artifactId>
     <name>egova-framework-dependencies</name>
-    <version>1.0.2</version>
+    <version>1.0.2-SNAPSHOT</version>
 
     <properties>
         <kafka.version>2.3.0</kafka.version>
