@@ -14,8 +14,8 @@
     <properties>
         <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
         <jdk.version>1.8</jdk.version>
-        <org.springframework.boot.version>2.4.5</org.springframework.boot.version>
-        <org.springframework.cloud.version>Hoxton.SR11</org.springframework.cloud.version>
+        <org.springframework.boot.version>2.3.7.RELEASE</org.springframework.boot.version>
+        <org.springframework.cloud.version>Hoxton.SR9</org.springframework.cloud.version>
         <jackson.version>2.12.3</jackson.version>
         <druid.version>1.2.6</druid.version>
         <commons-net.version>3.8.0</commons-net.version>
