@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.BeanSerializer;
+import com.fasterxml.jackson.databind.ser.BeanSerializerBuilder;
 import com.fasterxml.jackson.databind.ser.impl.BeanAsArraySerializer;
 import com.fasterxml.jackson.databind.ser.impl.ObjectIdWriter;
 import com.fasterxml.jackson.databind.ser.impl.UnwrappingBeanSerializer;
@@ -17,7 +18,8 @@ import com.flagwind.lang.ExtensibleObject;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 对ExtensibleObject实体序列化处理
@@ -42,6 +44,44 @@ public class ExtensibleObjectSerializer extends BeanSerializerBase {
     private boolean enableAssociative = true;
 
     /**
+     * @param builder Builder object that contains collected information
+     *   that may be needed for serializer
+     * @param properties Property writers used for actual serialization
+     */
+    public ExtensibleObjectSerializer(JavaType type, BeanSerializerBuilder builder,
+                          BeanPropertyWriter[] properties, BeanPropertyWriter[] filteredProperties, boolean enableAssociative)
+    {
+        super(type, builder, properties, filteredProperties);
+        this.enableAssociative = enableAssociative;
+    }
+
+
+
+    protected ExtensibleObjectSerializer(BeanSerializerBase src,
+                             ObjectIdWriter objectIdWriter, boolean enableAssociative) {
+        super(src, objectIdWriter);
+        this.enableAssociative = enableAssociative;
+    }
+
+    protected ExtensibleObjectSerializer(BeanSerializerBase src,
+                             ObjectIdWriter objectIdWriter, Object filterId, boolean enableAssociative) {
+        super(src, objectIdWriter, filterId);
+        this.enableAssociative = enableAssociative;
+    }
+
+    protected ExtensibleObjectSerializer(BeanSerializerBase src, Set<String> toIgnore, Set<String> toInclude, boolean enableAssociative) {
+        super(src, toIgnore, toInclude);
+        this.enableAssociative = enableAssociative;
+    }
+
+    // @since 2.11.1
+    protected ExtensibleObjectSerializer(BeanSerializerBase src,
+                             BeanPropertyWriter[] properties, BeanPropertyWriter[] filteredProperties, boolean enableAssociative) {
+        super(src, properties, filteredProperties);
+        this.enableAssociative = enableAssociative;
+    }
+
+    /**
      * 构造函数
      *
      * @param src 原解析对象
@@ -51,34 +91,11 @@ public class ExtensibleObjectSerializer extends BeanSerializerBase {
         this.enableAssociative = enableAssociative;
     }
 
-
-    protected ExtensibleObjectSerializer(BeanSerializerBase src, ObjectIdWriter objectIdWriter, Object filterId, boolean enableAssociative) {
-        super(src, objectIdWriter, filterId);
-        this.enableAssociative = enableAssociative;
+    public static BeanSerializer createDummy(JavaType forType, BeanSerializerBuilder builder)
+    {
+        return new BeanSerializer(forType, builder, NO_PROPS, null);
     }
 
-
-    protected ExtensibleObjectSerializer(BeanSerializerBase src, Set<String> toIgnore, boolean enableAssociative) {
-        super(src, toIgnore);
-        this.enableAssociative = enableAssociative;
-    }
-
-    /*
-     * /********************************************************** /*
-     * Life-cycle: factory methods, fluent factories
-     * /**********************************************************
-     */
-
-    /**
-     * Method for constructing dummy bean serializer; one that never outputs any
-     * properties
-     *
-     * @param forType forType
-     * @return BeanSerializer
-     */
-    public static BeanSerializer createDummy(JavaType forType) {
-        return new BeanSerializer(forType, null, NO_PROPS, null);
-    }
 
     @Override
     public JsonSerializer<Object> unwrappingSerializer(NameTransformer unwrapper) {
@@ -90,10 +107,6 @@ public class ExtensibleObjectSerializer extends BeanSerializerBase {
         return new ExtensibleObjectSerializer(this, objectIdWriter, _propertyFilterId, this.enableAssociative);
     }
 
-    @Override
-    protected BeanSerializerBase withIgnorals(Set<String> set) {
-        return new ExtensibleObjectSerializer(this, set, this.enableAssociative);
-    }
 
     @Override
     public BeanSerializerBase withFilterId(Object filterId) {
@@ -160,6 +173,17 @@ public class ExtensibleObjectSerializer extends BeanSerializerBase {
         gen.writeEndObject();
     }
 
+    @Override // @since 2.12
+    protected BeanSerializerBase withByNameInclusion(Set<String> toIgnore, Set<String> toInclude) {
+        return new ExtensibleObjectSerializer(this, toIgnore, toInclude,this.enableAssociative);
+    }
+
+    @Override // @since 2.11.1
+    protected BeanSerializerBase withProperties(BeanPropertyWriter[] properties,
+                                                BeanPropertyWriter[] filteredProperties) {
+        return new ExtensibleObjectSerializer(this, properties, filteredProperties,this.enableAssociative);
+    }
+
     /*
      * /********************************************************** /* Standard
      * methods /**********************************************************
@@ -168,5 +192,7 @@ public class ExtensibleObjectSerializer extends BeanSerializerBase {
     public String toString() {
         return "BeanSerializer for " + handledType().getName();
     }
+
+
 
 }
