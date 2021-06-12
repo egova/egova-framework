@@ -191,7 +191,10 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
                 TokenGranterWrapper tokenGranterWrapper = new TokenGranterWrapper(authenticationManager, tokenGranterProviders, endpoints);
                 endpoints.tokenGranter(tokenGranterWrapper);
             }
-
+            ClientDetailsService clientDetailsService = endpoints.getClientDetailsService();
+            if (!(clientDetailsService instanceof DefaultClientDetailsService)) {
+                endpoints.setClientDetailsService(this.clientDetailsService);
+            }
         }
 
         @SuppressWarnings("Duplicates")
@@ -208,6 +211,8 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
          */
         @Override
         public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+
+
             clients.inMemory()
                     .withClient("unity-client")
                     .secret(passwordEncoder.encode("unity"))
@@ -219,7 +224,13 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
                     .authorizedGrantTypes(grantTypes())
                     .authorities("ROLE_CLIENT")
                     .scopes("read", "write");
+//
+//
+            clientDetailsService.setBuilder(clients.and());
+            clients.withClientDetails(clientDetailsService);
         }
+
+
 
         /**
          * AuthorizationServerSecurityConfigurer 配置入口

@@ -17,7 +17,6 @@ import org.springframework.security.access.vote.AuthenticatedVoter;
 import org.springframework.security.access.vote.RoleVoter;
 import org.springframework.security.access.vote.UnanimousBased;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService;
 import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -83,8 +82,8 @@ public class AuthenticationBeanConfig {
     }
 
     @Bean
-    public DefaultClientDetailsService defaultClientDetailsService(ClientDetailsService clientDetailsService, ClientDetailsExecutor clientDetailsExecutor) {
-        return new DefaultClientDetailsService(clientDetailsService, clientDetailsExecutor);
+    public DefaultClientDetailsService defaultClientDetailsService(ClientDetailsExecutor clientDetailsExecutor) {
+        return new DefaultClientDetailsService(clientDetailsExecutor);
     }
 
 
