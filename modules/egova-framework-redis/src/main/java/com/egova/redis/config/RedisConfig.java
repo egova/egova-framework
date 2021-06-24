@@ -64,8 +64,9 @@ public abstract class RedisConfig
     public LettuceConnectionFactory getConnectionFactory(int dbIndex) {
         Function<Integer, LettuceConnectionFactory> factoryFunction = (i) -> {
             LettuceConnectionFactory factory = getRedisConnectionFactory();
-            factory.afterPropertiesSet();
             factory.setDatabase(i);
+            factory.afterPropertiesSet();
+
             return factory;
         };
         return factoryCache.computeIfAbsent(dbIndex, factoryFunction);
