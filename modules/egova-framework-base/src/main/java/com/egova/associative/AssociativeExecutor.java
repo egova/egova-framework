@@ -123,7 +123,10 @@ public class AssociativeExecutor {
      * @return
      */
     public static Map<String, Object> getExtrasMap(ExtensibleObject obj) {
-        Map<String, Object> stringObjectMap = new HashMap<>(obj.getExtras());
+        Map<String, Object> stringObjectMap = new HashMap<>();
+        if (obj.getExtras() != null && obj.getExtras().size() > 0) {
+            stringObjectMap.putAll(Optional.ofNullable(obj.getExtras()).orElse(new HashMap<>()));
+        }
         List<EntityField> fields = EntityTypeHolder.getFields(obj.getClass());
         for (EntityField field : fields) {
             try {
@@ -150,5 +153,66 @@ public class AssociativeExecutor {
             extras.entrySet().forEach(kv -> obj.set(kv.getKey(), kv.getValue()));
         }
         return extras.keySet();
+    }
+
+
+    public static void main(String[] args) throws InterruptedException {
+
+        Map<String, Object> stringObjectMap1 = new HashMap<>();
+        stringObjectMap1.put("dd", "vvv");
+        stringObjectMap1.put("ee", "vvv");
+        stringObjectMap1.put("vv", "vvv");
+
+       Map<String, Object> stringObjectMap2 = new HashMap<>(stringObjectMap1);
+
+
+        stringObjectMap1=null;
+
+        System.out.println(stringObjectMap2.size());
+
+
+//        Thread thread1 = new Thread(() -> {
+//            for (int i = 0; i < 100; i++) {
+//                try {
+//                    if(stringObjectMap1)
+//                    stringObjectMap1.put("vv" + i, "vvv");
+//                    Thread.sleep(100);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//
+//        Thread thread2 = new Thread(() -> {
+//            for (int i = 0; i < 100; i++) {
+//                try {
+//                    stringObjectMap1 = null;
+//                    Thread.sleep(100);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//
+//        Thread thread3 = new Thread(() -> {
+//            for (int i = 0; i < 100; i++) {
+//                try {
+//                    stringObjectMap2.putAll(stringObjectMap1);
+//                    Thread.sleep(100);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//
+//        thread1.start();
+//        thread2.start();
+//        thread3.start();
+
+        try {
+            Thread.sleep(1000000000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
