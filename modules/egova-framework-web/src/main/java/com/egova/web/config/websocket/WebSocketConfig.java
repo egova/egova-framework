@@ -16,6 +16,7 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 
 import java.security.Principal;
 import java.util.HashSet;
@@ -40,6 +41,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             }
         });
         return true;
+    }
+
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registry) {
+        registry.setSendTimeLimit(60 * 1000) // 一分钟
+                .setSendBufferSizeLimit(500 * 1024 * 1024) // 缓冲区限制 500M
+                .setMessageSizeLimit(200 * 1024 * 1024);  // 消息大小限制200M
     }
 
     @Override
