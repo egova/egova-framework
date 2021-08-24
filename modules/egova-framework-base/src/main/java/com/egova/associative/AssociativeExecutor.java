@@ -125,7 +125,13 @@ public class AssociativeExecutor {
     public static Map<String, Object> getExtrasMap(ExtensibleObject obj) {
         Map<String, Object> stringObjectMap = new HashMap<>();
         if (obj.getExtras() != null && obj.getExtras().size() > 0) {
-            stringObjectMap.putAll(Optional.ofNullable(obj.getExtras()).orElse(new HashMap<>()));
+            try {
+                stringObjectMap.putAll(Optional.ofNullable(obj.getExtras()).orElse(new HashMap<>()));
+            } catch (Exception ex) {
+                String message = String.format("%s对象在生成联想属性时出现并发异常，请检查是否因为缓存数据时没有复制对象引起。", obj.getClass().getSimpleName());
+                LOG.error(message);
+                throw ExceptionUtils.framework(message, ex);
+            }
         }
         List<EntityField> fields = EntityTypeHolder.getFields(obj.getClass());
         for (EntityField field : fields) {
