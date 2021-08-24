@@ -43,11 +43,13 @@ public class Context implements ContentBase {
         return list;
     }
 
+    @Override
     public <T> Map<String, T> resolveMap(Class<T> serviceType) {
         Map<String, T> map = context.getBeansOfType(serviceType);
         return map;
     }
 
+    @Override
     public boolean contains(String name) {
         return context.containsBean(name);
     }

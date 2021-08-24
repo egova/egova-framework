@@ -248,7 +248,7 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
             @Override
             public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
                 String storage = context.getEnvironment().getProperty("egova.security.browser.token-storage", "redis");
-                return storage.equalsIgnoreCase("redis");
+                return "redis".equalsIgnoreCase(storage);
             }
         }
     }
@@ -394,7 +394,7 @@ public class AuthorizationServerAutoConfiguration extends AuthorizationServerSec
             @Override
             public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
                 String storage = context.getEnvironment().getProperty("egova.security.browser.token-storage", "redis");
-                return storage.equalsIgnoreCase("jdbc");
+                return "jdbc".equalsIgnoreCase(storage);
             }
         }
 

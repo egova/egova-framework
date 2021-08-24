@@ -14,8 +14,8 @@ public class DefaultUserDetailsService implements UserDetailsService
 {
 	private UserDetailsExecutor userDetailsExecutor;
 
-	public DefaultUserDetailsService(UserDetailsExecutor UserDetailsExecutor) {
-		this.userDetailsExecutor = UserDetailsExecutor;
+	public DefaultUserDetailsService(UserDetailsExecutor userDetailsExecutor) {
+		this.userDetailsExecutor = userDetailsExecutor;
 	}
 
 	@Override

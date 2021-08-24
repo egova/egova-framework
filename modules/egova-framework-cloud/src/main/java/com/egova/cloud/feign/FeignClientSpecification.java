@@ -43,8 +43,12 @@ class FeignClientSpecification implements NamedContextFactory.Specification {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         FeignClientSpecification that = (FeignClientSpecification) o;
         return Objects.equals(name, that.name) &&
                 Arrays.equals(configuration, that.configuration);

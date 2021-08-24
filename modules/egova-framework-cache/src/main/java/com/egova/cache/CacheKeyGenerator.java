@@ -53,9 +53,9 @@ public class CacheKeyGenerator implements KeyGenerator {
 			sb.append(method.getName().substring(6));
 		} else if (method.getName().startsWith("getBy")) {
 			sb.append(method.getName().substring(5));
-		} else if (method.getName().equalsIgnoreCase("getDataFromCache")) {
+		} else if ("getDataFromCache".equalsIgnoreCase(method.getName())) {
 			sb.append("all");
-		} else if (method.getName().equalsIgnoreCase("getManyFromCache")) {
+		} else if ("getManyFromCache".equalsIgnoreCase(method.getName())) {
 			sb.append("key-value");
 		} else {
 			sb.append(method.getName());

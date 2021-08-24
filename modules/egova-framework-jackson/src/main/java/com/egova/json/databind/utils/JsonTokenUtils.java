@@ -42,7 +42,7 @@ public class JsonTokenUtils {
         } else if (JsonToken.START_ARRAY.equals(jsonToken)) {
             value = "";
             while ((!parser.isClosed()) && (!JsonToken.END_ARRAY.equals(jsonToken))) {
-                if (!value.equalsIgnoreCase("[") && value.length() > 1) {
+                if (!"[".equalsIgnoreCase(value) && value.length() > 1) {
                     value += ",";
                 }
                 value += "\""+parser.getText()+"\"";

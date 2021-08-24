@@ -8,16 +8,16 @@ public class StringToBooleanConverter implements Converter<String, Boolean>{
     @Override
     public Boolean convert(String value) {
 
-        if (value.equals("0")) {
+        if ("0".equals(value)) {
             return Boolean.FALSE;
         }
-        if (value.equals("1")) {
+        if ("1".equals(value)) {
             return Boolean.TRUE;
         }
-        if (value.equalsIgnoreCase("true")) {
+        if ("true".equalsIgnoreCase(value)) {
             return Boolean.TRUE;
         }
-        if (value.equalsIgnoreCase("false")) {
+        if ("false".equalsIgnoreCase(value)) {
             return Boolean.FALSE;
         }
         return Boolean.valueOf(value);

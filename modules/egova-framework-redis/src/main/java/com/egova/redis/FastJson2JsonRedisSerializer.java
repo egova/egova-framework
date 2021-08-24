@@ -35,6 +35,7 @@ public class FastJson2JsonRedisSerializer<T> implements RedisSerializer<T> {
         this.clazz = clazz;
     }
 
+    @Override
     public byte[] serialize(T t) {
         if (t == null) {
             return new byte[0];
@@ -43,6 +44,7 @@ public class FastJson2JsonRedisSerializer<T> implements RedisSerializer<T> {
         return JSON.toJSONBytes(t,serializeConfig, SerializerFeature.WriteDateUseDateFormat,SerializerFeature.WriteClassName);
     }
 
+    @Override
     public T deserialize(byte[] bytes) {
         if (bytes == null || bytes.length <= 0) {
             return null;

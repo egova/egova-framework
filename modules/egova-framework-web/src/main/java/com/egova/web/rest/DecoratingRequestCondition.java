@@ -23,6 +23,7 @@ public class DecoratingRequestCondition implements RequestCondition<DecoratingRe
     // 这里combine()方法主要是供给复合类型的RequestMapping使用的，这种类型的Mapping可以持有
     // 两个Mapping信息，因而需要对两个Mapping进行合并，这个合并的过程其实就是对每个RequestMappingInfo
     // 中的各个条件进行合并，这里就是对RequestCondition条件进行合并
+    @Override
     @NotNull
     public DecoratingRequestCondition combine(DecoratingRequestCondition other) {
         String[] allStates = merge(values, other);
@@ -33,6 +34,7 @@ public class DecoratingRequestCondition implements RequestCondition<DecoratingRe
     // 判断当前请求对应用户选择的模板与当前接口所能处理的模板是否一致，
     // 如果一致则返回当前RequestCondition，这里RequestMappingHandlerMapping在匹配请求时，
     // 如果当前条件的匹配结果不为空，则说明当前条件是能够匹配上的，如果返回值为空，则说明其不能匹配
+    @Override
     public DecoratingRequestCondition getMatchingCondition(HttpServletRequest request) {
         String s = Strman.toKebabCase(request.getParameter("@" + this.name));
         if (StringUtils.isEmpty(s)) {
@@ -47,6 +49,7 @@ public class DecoratingRequestCondition implements RequestCondition<DecoratingRe
 
     // 对两个RequestCondition对象进行比较，这里主要是如果存在两个注册的一样的Mapping，那么就会对
     // 这两个Mapping进行排序，以判断哪个Mapping更适合处理当前request请求
+    @Override
     public int compareTo(@NotNull DecoratingRequestCondition other, @NotNull HttpServletRequest request) {
         return null != values && null == other.values ? 1
                 : null == values && null != other.values ? -1 : 0;

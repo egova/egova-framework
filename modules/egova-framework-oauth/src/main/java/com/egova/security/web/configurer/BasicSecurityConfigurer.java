@@ -31,7 +31,8 @@ public class BasicSecurityConfigurer implements HttpSecurityConfigurer
 
 	private static class LuminaryRequestedMatcher implements RequestMatcher
 	{
-		public boolean matches(HttpServletRequest request) {
+		@Override
+        public boolean matches(HttpServletRequest request) {
 			AntPathRequestMatcher swaggerRequestMatcher = new AntPathRequestMatcher(SWAGGER_URL);
 			EndpointRequest.EndpointRequestMatcher endpointRequestMatcher = EndpointRequest.toAnyEndpoint();
 			return swaggerRequestMatcher.matches(request) || endpointRequestMatcher.matches(request);

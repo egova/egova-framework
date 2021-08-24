@@ -77,6 +77,7 @@ public class JacksonJsonMapping implements JsonMapping {
     }
 
 
+    @Override
     public <T> List<T> deserializeList(String json, Type type) {
         try {
             JavaType javaType = enableAssociativeObjectMapping.getTypeFactory().constructType(type);

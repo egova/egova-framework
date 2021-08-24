@@ -31,6 +31,7 @@ public class TokenGranterWrapper implements TokenGranter {
         }
     }
 
+    @Override
     public OAuth2AccessToken grant(String grantType, TokenRequest tokenRequest) {
         for (TokenGranter granter : granters) {
             OAuth2AccessToken grant = granter.grant(grantType, tokenRequest);
