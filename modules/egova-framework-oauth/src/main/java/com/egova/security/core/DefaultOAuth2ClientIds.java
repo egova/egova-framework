@@ -3,6 +3,7 @@ package com.egova.security.core;
 
 /**
  * 默认的Client资源常量
+ * @author chenabao
  */
 public class DefaultOAuth2ClientIds
 {

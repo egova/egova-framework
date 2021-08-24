@@ -4,6 +4,9 @@ package com.egova.security.core.properties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 
+/**
+ * @author chenabao
+ */
 @ConfigurationProperties(prefix = "egova.security")
 public class SecurityProperties {
 
