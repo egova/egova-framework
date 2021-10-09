@@ -29,7 +29,12 @@ public class FilePath {
     private String type;
 
     /**
-     * 服务器路径
+     * 文件大小
+     */
+    private Long size;
+
+    /**
+     * 服务器路径(或相对路径)
      */
     private String path;
 
