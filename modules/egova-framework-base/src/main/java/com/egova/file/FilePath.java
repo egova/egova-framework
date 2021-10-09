@@ -29,7 +29,7 @@ public class FilePath {
     private String type;
 
     /**
-     * 文件大小
+     * 文件大小（KB）
      */
     private Long size;
 
