@@ -5,7 +5,7 @@
     <groupId>com.egova</groupId>
     <artifactId>egova-framework</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.3</version>
+    <version>1.0.3-SNAPSHOT</version>
     <name>egova-framework</name>
 
     <properties>
@@ -32,7 +32,7 @@
 
 
     <scm>
-        <tag>egova-framework-1.0.3</tag>
+        <tag>master</tag>
         <url>https://github.com/egova/egova-framework.git</url>
         <connection>scm:git:https://github.com/egova/egova-framework.git</connection>
         <developerConnection>scm:git:https://github.com/egova/egova-framework.git</developerConnection>
