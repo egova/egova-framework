@@ -3,13 +3,13 @@
          <parent>
             <groupId>com.egova</groupId>
             <artifactId>egova-framework</artifactId>
-             <version>1.0.3-SNAPSHOT</version>
+             <version>1.0.3</version>
              <relativePath>../../pom.xml</relativePath>
         </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>egova-framework-oauth</artifactId>
     <name>egova-framework-oauth</name>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.3</version>
 
 
     <dependencies>
