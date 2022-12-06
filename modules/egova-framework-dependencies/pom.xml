@@ -18,7 +18,7 @@
         <org.springframework.cloud.version>Hoxton.SR9</org.springframework.cloud.version>
         <jackson.version>2.12.3</jackson.version>
         <druid.version>1.2.6</druid.version>
-        <commons-net.version>3.8.0</commons-net.version>
+        <commons-net.version>3.9.0</commons-net.version>
         <commons-io.version>2.8.0</commons-io.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <ojdbc14.version>10.2.0.4.0</ojdbc14.version>
